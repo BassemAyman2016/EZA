@@ -1,2 +1,2 @@
-# EZA-
+# EZA+
 EZA+ web app
