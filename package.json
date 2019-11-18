@@ -1,0 +1,59 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "description": "vue+node",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "server"
+  ],
+  "author": "OBM",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^3.0.5",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "bootstrap": "^4.3.1",
+    "concurrently": "^4.1.0",
+    "cores": "^0.8.5",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "express-handlebars": "^3.0.2",
+    "fetch": "^1.1.0",
+    "heroku": "^7.22.9",
+    "history": "^4.9.0",
+    "joi": "^14.3.1",
+    "jquery": "^3.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^2.2.0",
+    "moment": "^2.24.0",
+    "mongoose": "^5.3.7",
+    "mongoose-timestamp": "^0.6.0",
+    "node-fetch": "^2.3.0",
+    "nodemailer": "^6.1.0",
+    "passport": "^0.4.0",
+    "passport-http-bearer": "^1.0.1",
+    "passport-jwt": "^4.0.0",
+    "q": "^1.5.1",
+    "restify": "^8.4.0",
+    "startbootstrap-simple-sidebar": "^5.0.0",
+    "styled-components": "^4.2.0",
+    "tinycolor2": "^1.4.1",
+    "uuid": "^3.3.2",
+    "web-push": "^3.3.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BassemAyman2016/EZA.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BassemAyman2016/EZA/issues"
+  },
+  "homepage": "https://github.com/BassemAyman2016/EZA",
+  "devDependencies": {
+    "nodemon": "^1.19.4"
+  }
+}
