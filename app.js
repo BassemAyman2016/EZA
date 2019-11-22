@@ -6,6 +6,7 @@ const config = require('./config')
 const bodyParser = require('body-parser');
 const db = config.MONGODB_URI
 const user = require('./routes/users')
+const accountService = require('./routes/accountServices')
 require('dotenv').config();
 mongoose.Promise = global.Promise;
 mongoose
@@ -18,8 +19,8 @@ app.use(cors())
 
 
 
-app.use('/users', user);
-
+app.use('/api/users', user);
+app.use('/api/sessions', accountService); // Used For Login , Activation , Deactivation , Forgetting Password if needed
 
 
 
