@@ -6,6 +6,7 @@ const config = require('./config')
 const bodyParser = require('body-parser');
 const db = config.MONGODB_URI
 const user = require('./routes/users')
+require('dotenv').config();
 mongoose.Promise = global.Promise;
 mongoose
     .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -22,7 +23,7 @@ app.use('/users', user);
 
 
 
-const port = config.PORT || 3000
+const port = config.PORT
 app.listen(port, (req, res) => {
     console.log(`Server up and running on port ${port}`)
 })
