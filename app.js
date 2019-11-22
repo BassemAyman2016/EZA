@@ -6,6 +6,8 @@ const config = require('./config')
 const bodyParser = require('body-parser');
 const db = config.MONGODB_URI
 const user = require('./routes/users')
+const accountService = require('./routes/accountServices')
+require('dotenv').config();
 mongoose.Promise = global.Promise;
 mongoose
     .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -17,12 +19,12 @@ app.use(cors())
 
 
 
-app.use('/users', user);
+app.use('/api/users', user);
+app.use('/api/sessions', accountService); // Used For Login , Activation , Deactivation , Forgetting Password if needed
 
 
 
-
-const port = config.PORT || 3000
+const port = config.PORT
 app.listen(port, (req, res) => {
     console.log(`Server up and running on port ${port}`)
 })

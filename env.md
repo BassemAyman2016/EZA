@@ -8,3 +8,6 @@ MONGODB_URI=
 # Database connections Public and Private Keys
 privateKey=
 publicKey=
+# If Nodemon crashes ctrl+c and type in terminal 
+killall -9 node
+# Then start nodemon back

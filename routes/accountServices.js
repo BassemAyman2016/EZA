@@ -6,7 +6,7 @@ const user = require('../controllers/users');
 const middleware = require('../middleware/login')
 
 // a simple test url to check that all of our files are communicating correctly.
-router.post('/registration', user.UserRegistration);
 router.post('/login', user.Login);
-router.put('/updateProfile/:user_id', middleware.verifyToken, user.UpdateUser)
+router.put('/deactivate/:user_id', middleware.verifyToken, user.deleteProfile)
+router.put('/activate/:user_id', middleware.verifyToken, user.activateAccount)
 module.exports = router;
