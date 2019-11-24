@@ -8,11 +8,11 @@ const GroupUserSchema = new Schema({
         type: ObjectId,
         required: true
     },
-    student_id:{
+    user_id:{
         type: ObjectId,
         required: true
     },
-    pending:{
+    Pending:{
         type:Boolean,
         required:false
     }
