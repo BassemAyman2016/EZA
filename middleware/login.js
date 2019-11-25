@@ -9,8 +9,7 @@ function verifyToken(req, res, next) {
     if (typeof bearerHeader !== 'undefined') {
         // Split at the space
         const bearer = bearerHeader.split(' ');
-        console.log("entered")
-            // Get token from array
+        // Get token from array
         const bearerToken = bearer[1];
         // Set the tokenc
         if (bearer[0] !== 'bearer') {
@@ -30,7 +29,6 @@ function verifyToken(req, res, next) {
         }
     } else {
         // Forbidden
-        console.log("entered1")
         return res.status(403).send({ status: 'failure', message: 'Unauthorized' });
     }
 }

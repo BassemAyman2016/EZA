@@ -4,7 +4,6 @@ const router = express.Router();
 const post = require('../controllers/posts');
 
 const middleware = require('../middleware/login')
-console.log("entered routs")
 
 router.post('/createPost/:user_id/and/:group_id', middleware.verifyToken, post.CreatePost);
 // router.delete('/deleteGroup/:user_id',middleware.verifyToken, group.DeleteGroup);
