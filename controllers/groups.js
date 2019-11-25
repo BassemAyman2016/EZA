@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
     // const passport = require('passport')
 const Group = require('../models/Group');
 const GroupUser = require('../models/GroupUser');
+const User = require('../models/User')
 const tokenKey = require('../config').secretOrKey
 require('dotenv').config();
 

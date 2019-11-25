@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const Post = require('../models/Post');
 const Group = require('../models/Group');
 const GroupUser = require('../models/GroupUser');
+const User = require('../models/User')
 const tokenKey = require('../config').secretOrKey
 require('dotenv').config();
 
