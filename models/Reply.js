@@ -34,5 +34,9 @@ const UserSchema = new Schema({
         type: Boolean,
         default: false
     },
+    post_id: {
+        type: String,
+        required: true
+    }
 })
 module.exports = User = mongoose.model('replies', UserSchema)

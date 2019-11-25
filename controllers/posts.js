@@ -61,6 +61,8 @@ CreatePost = async function(req, res) {
 };
 
 
+
+
 module.exports = {
-    CreatePost
+    CreatePost,
 }

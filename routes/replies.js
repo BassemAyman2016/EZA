@@ -6,7 +6,7 @@ const reply = require('../controllers/replies');
 
 const middleware = require('../middleware/login')
 
-// router.post('/createGroup/:user_id',middleware.verifyToken, group.CreateGroup);
+router.post('/createReply/:post_id', middleware.verifyToken, reply.CreateReply);
 // router.delete('/deleteGroup/:user_id',middleware.verifyToken, group.DeleteGroup);
 // router.get('/getAllGroups', group.GetALlGroups);
 // router.post('/joinRequest/:user_id',middleware.verifyToken, group.JoinRequest);
