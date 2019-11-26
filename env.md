@@ -1,8 +1,8 @@
 # .env doesn't contain comments so do not copy the comments with you.
 # current environment
-ENV=development
+ENV=
 # Port Number You would like to work on
-PORT=3000
+PORT=
 # DATABASE env variables
 MONGODB_URI=
 # Database connections Public and Private Keys
