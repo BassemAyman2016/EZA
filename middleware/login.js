@@ -1,6 +1,7 @@
 const tokenKey = require('../config').secretOrKey
 const jwt = require('jsonwebtoken')
 require('dotenv').config();
+
 function verifyToken(req, res, next) {
     // Get auth header value
     const bearerHeader = req.headers['authorization'];
@@ -16,11 +17,10 @@ function verifyToken(req, res, next) {
         } else {
             req.token = bearerToken;
             // Next middleware
-            jwt.verify(req.token, tokenKey, async (err, authData) => {
+            jwt.verify(req.token, tokenKey, async(err, authData) => {
                 if (err) {
                     return res.status(400).send({ status: 'failure', message: 'Authentication Failed' })
-                }
-                else {
+                } else {
                     req.user_id = authData.id
                     req.role = authData.User_Category
                     next()

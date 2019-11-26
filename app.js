@@ -8,6 +8,9 @@ const db = config.MONGODB_URI
 const db2 = config.MONGODOCKER_URI
 const user = require('./routes/users')
 const accountService = require('./routes/accountServices')
+const group = require('./routes/groups')
+const post = require('./routes/posts')
+const reply = require('./routes/replies')
 require('dotenv').config();
 mongoose.Promise = global.Promise;
 mongoose
@@ -22,6 +25,9 @@ app.use(cors())
 
 app.use('/api/users', user);
 app.use('/api/sessions', accountService); // Used For Login , Activation , Deactivation , Forgetting Password if needed
+app.use('/api/groups', group)
+app.use('/api/posts', post)
+app.use('/api/replies', reply)
 
 
 
