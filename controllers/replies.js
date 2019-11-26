@@ -51,14 +51,14 @@ CreateReply = async function(req, res) {
                     if (replyCreated) {
                         res.status(200).send({ status: 'success', msg: 'Reply Created successfully', data: replyCreated });
                     } else {
-                        return res.status(404).send({ status: 'failure', message: 'error occured while creating the post' })
+                        return res.status(404).send({ status: 'failure', message: 'error occured while creating the reply' })
                     }
                 }
             }
         }
     } catch (error) {
         console.log(error)
-        res.status(422).send({ status: 'failure', message: 'Update Profile Failed' });
+        res.status(422).send({ status: 'failure', message: 'Reply Submission Failed' });
     }
 };
 

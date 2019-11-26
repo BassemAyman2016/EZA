@@ -56,7 +56,7 @@ CreatePost = async function(req, res) {
         }
     } catch (error) {
         console.log(error)
-        res.status(422).send({ status: 'failure', message: 'Update Profile Failed' });
+        res.status(422).send({ status: 'failure', message: 'Post Submission Failed' });
     }
 };
 
