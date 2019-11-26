@@ -1,4 +1,3 @@
-
 #!/bin/sh
 FROM node:10-alpine
 
