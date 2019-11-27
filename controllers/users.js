@@ -3,9 +3,8 @@ const jwt = require('jsonwebtoken')
 // const passport = require('passport')
 const User = require('../models/User');
 const tokenKey = require('../config').secretOrKey
+const EmailAdapter = require('../helpers/mailAdapter')
 require('dotenv').config();
-
-
 Login = async function (req, res) {
     try {
         const validation = req.body && req.body.Email != null && req.body.Password != null
@@ -48,6 +47,7 @@ UserRegistration = async function (req, res) {
             return res.status(400).send({ status: 'failure', message: 'Params are missing' })
         }
         else {
+            const email = req.body.Email
             if (req.body.User_Category === 'Student') {
                 if (!req.body.student_id) {
                     return res.status(400).send({ status: 'failure', message: 'Student ID Missing' })
@@ -56,25 +56,40 @@ UserRegistration = async function (req, res) {
                 if (user) {
                     return res.status(400).send({ status: 'failure', message: 'Email Already Exists' })
                 }
-                const encrypted = bcrypt.genSaltSync(10);
-                const hashedPassword = bcrypt.hashSync(req.body.Password, encrypted);
-                req.body.Password = hashedPassword
-                req.body.Deleted = false
-                const newUser = await User.create(req.body);
-                const userCreated = await User.findOne({ '_id': newUser._id })
-                res.status(200).send({ status: 'success', msg: 'User created successfully', data: userCreated });
+                try {
+                    const sendMail = await EmailAdapter.send('mado', email, 'Welcome To Our Family', 'Congratulations, You are now an official EZA+ Member')
+                    const encrypted = bcrypt.genSaltSync(10);
+                    const hashedPassword = bcrypt.hashSync(req.body.Password, encrypted);
+                    req.body.Password = hashedPassword
+                    req.body.Deleted = false
+                    const newUser = await User.create(req.body);
+                    const userCreated = await User.findOne({ '_id': newUser._id })
+                    res.status(200).send({ status: 'success', msg: 'User created successfully', data: userCreated });
+                }
+                catch (e) {
+                    console.log(e)
+                    res.status(422).send({ status: 'failure', message: 'User Creation Failed' });
+                }
             }
             else {
                 const user = await User.findOne({ 'Email': req.body.Email });
                 if (user) {
                     return res.status(400).send({ status: 'failure', message: 'Email Already Exists' })
                 }
-                const encrypted = bcrypt.genSaltSync(10);
-                const hashedPassword = bcrypt.hashSync(req.body.Password, encrypted);
-                req.body.Password = hashedPassword
-                const newUser = await User.create(req.body);
-                const userCreated = await User.findOne({ '_id': newUser._id })
-                res.status(200).send({ status: 'success', msg: 'User created successfully', data: userCreated });
+                try {
+                    const sendMail = await EmailAdapter.send('mado', email, 'Welcome To Our Family', 'Congratulations, You are now an official EZA+ Member')
+                    const encrypted = bcrypt.genSaltSync(10);
+                    const hashedPassword = bcrypt.hashSync(req.body.Password, encrypted);
+                    req.body.Password = hashedPassword
+                    req.body.Deleted = false
+                    const newUser = await User.create(req.body);
+                    const userCreated = await User.findOne({ '_id': newUser._id })
+                    res.status(200).send({ status: 'success', msg: 'User created successfully', data: userCreated });
+                }
+                catch (e) {
+                    console.log(e)
+                    res.status(422).send({ status: 'failure', message: 'User Creation Failed' });
+                }
             }
         }
     } catch (error) {
