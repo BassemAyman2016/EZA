@@ -6,9 +6,10 @@ const reply = require('../controllers/replies');
 
 const middleware = require('../middleware/login')
 
-// router.post('/createGroup/:user_id',middleware.verifyToken, group.CreateGroup);
+router.post('/createReply/:post_id', middleware.verifyToken, reply.CreateReply);
+router.post('/deleteReply/:user_id/:reply_id', middleware.verifyToken, reply.DeleteReply);
 // router.delete('/deleteGroup/:user_id',middleware.verifyToken, group.DeleteGroup);
-// router.get('/getAllGroups', group.GetALlGroups);
+router.get('/getAllReplies/:user_id/:post_id', middleware.verifyToken, reply.GetAllRepliesToPost);
 // router.post('/joinRequest/:user_id',middleware.verifyToken, group.JoinRequest);
 // router.post('/acceptJoinRequest/:user_id',middleware.verifyToken, group.AcceptJoinRequest);
 
