@@ -10,4 +10,6 @@ privateKey=
 publicKey=
 # If Nodemon crashes ctrl+c and type in terminal 
 killall -9 node
+sudo netstat -tupln
+sudo kill -9 pid
 # Then start nodemon back
