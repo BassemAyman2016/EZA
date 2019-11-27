@@ -11,6 +11,7 @@ const accountService = require('./routes/accountServices')
 const group = require('./routes/groups')
 const post = require('./routes/posts')
 const reply = require('./routes/replies')
+const googleApi = require('./helpers/googleApi')
 require('dotenv').config();
 mongoose.Promise = global.Promise;
 mongoose
@@ -20,8 +21,7 @@ mongoose
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cors())
-
-
+app.use(googleApi)
 
 app.use('/api/users', user);
 app.use('/api/sessions', accountService); // Used For Login , Activation , Deactivation , Forgetting Password if needed
