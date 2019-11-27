@@ -60,9 +60,69 @@ CreatePost = async function(req, res) {
     }
 };
 
+DeletePost = async function(req, res) {
+    try {
+        if (req.user_id !== req.params.user_id) {
+            return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
+        }
+        const user = await User.findOne({ '_id': req.params.user_id })
+        if (!user) {
+            return res.status(404).send({ status: 'failure', message: 'User Not Found' })
+        }
+        const post = await Post.findOne({ '_id': req.params.post_id })
+        if (!post) {
+            return res.status(404).send({ status: 'failure', message: 'Post Not Found' })
+        }
+        if (post.user_id === req.params.user_id) {
+            if (user.Deleted === true) {
+                return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
+            } else {
+                await Post.findOneAndUpdate({ user_id: req.params.user_id, _id: req.params.post_id }, { Deleted: true })
+                const deletedPost = await Post.find({ user_id: req.params.user_id, _id: req.params.post_id })
+                res.status(200).send({ status: 'success', msg: 'Post Deleted successfully', data: deletedPost });
+            }
+        } else {
+            return res.status(404).send({ status: 'failure', message: 'you cannot delete this post' })
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(422).send({ status: 'failure', message: 'Post Deletion Failed' });
+    }
+}
 
+GetAllGroupPosts = async function(req, res) {
+    try {
+        if (req.user_id !== req.params.user_id) {
+            return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
+        }
+        const user = await User.findOne({ '_id': req.params.user_id })
+        if (!user) {
+            return res.status(404).send({ status: 'failure', message: 'User Not Found' })
+        }
+        const group = await Group.findOne({ '_id': req.params.group_id })
+        if (!group) {
+            return res.status(404).send({ status: 'failure', message: 'Group Not Found' })
+        }
+        const groupUser = await GroupUser.findOne({ 'user_id': req.params.user_id, 'group_id': req.params.group_id })
+        if (!groupUser) {
+            if (group.Created_By !== req.params.user_id)
+                return res.status(404).send({ status: 'failure', message: 'You Are Not Part Of This Group' })
+        }
+        if (user.Deleted === true) {
+            return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
+        } else {
+            const allPosts = await Post.find({ group_id: req.params.group_id, Deleted: false })
+            res.status(200).send({ status: 'success', msg: 'Posts Fetched successfully', data: allPosts });
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(422).send({ status: 'failure', message: 'Posts Fetching Failed' });
+    }
+}
 
 
 module.exports = {
     CreatePost,
+    DeletePost,
+    GetAllGroupPosts
 }
