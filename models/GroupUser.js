@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const User =require('./User');
 var ObjectId = mongoose.Schema.Types.ObjectId;
 const Schema = mongoose.Schema
 const GroupUserSchema = new Schema({
@@ -6,11 +7,13 @@ const GroupUserSchema = new Schema({
   
     group_id: {
         type: ObjectId,
-        required: true
+        required: true,
+        ref: 'groups'
     },
     user_id:{
         type: ObjectId,
-        required: true
+        required: true,
+        ref: 'users'
     },
     Pending:{
         type:Boolean,

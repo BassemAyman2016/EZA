@@ -13,5 +13,7 @@ router.post('/joinRequest/:user_id',middleware.verifyToken, group.JoinRequest);
 router.post('/acceptJoinRequest/:user_id',middleware.verifyToken, group.AcceptJoinRequest);
 router.get('/getAllGroupByCreator/:user_id',middleware.verifyToken, group.GetAllGroupByCreator);
 router.get('/getAllGroupByUser/:user_id',middleware.verifyToken, group.GetAllGroupByUser);
+router.get('/getAllUsersInGroup/:user_id/:group_id',middleware.verifyToken, group.GetAllUsersInGroup);
+router.delete('/doctorKickUser/:user_id',middleware.verifyToken, group.DoctorKickUser);
 
 module.exports = router;
