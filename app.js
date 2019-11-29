@@ -11,6 +11,7 @@ const accountService = require('./routes/accountServices')
 const group = require('./routes/groups')
 const post = require('./routes/posts')
 const reply = require('./routes/replies')
+const resources = require('./routes/resources')
 require('dotenv').config();
 mongoose.Promise = global.Promise;
 mongoose
@@ -28,6 +29,8 @@ app.use('/api/sessions', accountService); // Used For Login , Activation , Deact
 app.use('/api/groups', group)
 app.use('/api/posts', post)
 app.use('/api/replies', reply)
+app.use('/api/resources', resources)
+
 
 
 

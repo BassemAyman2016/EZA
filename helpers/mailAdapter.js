@@ -5,7 +5,7 @@ const config = require('../config')
 // Only needed if you don't have a real mail account for testing
 
 // create reusable transporter object using the default SMTP transport
-async function send(from, to, subject, text) {
+async function send(from, to, subject, text, html) {
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -19,7 +19,8 @@ async function send(from, to, subject, text) {
         from: config.email_bot, // sender address
         to: to, // list of receivers
         subject: subject, // Subject line
-        text: text// plain body
+        text: text,// plain body
+        html: html
     });
 
     console.log("Message sent");
