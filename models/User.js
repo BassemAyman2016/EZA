@@ -47,6 +47,10 @@ const UserSchema = new Schema({
     student_id: {
         type: String,
         required: false
+    },
+    token: {
+        type: String,
+        required: false
     }
 
 

@@ -4,6 +4,10 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User');
 const tokenKey = require('../config').secretOrKey
 const EmailAdapter = require('../helpers/mailAdapter')
+const fs = require('fs')
+const path = require('path')
+const crypto = require('crypto')
+
 require('dotenv').config();
 Login = async function (req, res) {
     try {
@@ -57,7 +61,9 @@ UserRegistration = async function (req, res) {
                     return res.status(400).send({ status: 'failure', message: 'Email Already Exists' })
                 }
                 try {
-                    const sendMail = await EmailAdapter.send('mado', email, 'Welcome To Our Family', 'Congratulations, You are now an official EZA+ Member')
+                    const html = fs.readFileSync(path.resolve(__dirname, 'htmlPage.html'), 'utf8').toString()
+                        .replace(/\$\{token\}/g, `http://ezaplus.com`)
+                    const sendMail = await EmailAdapter.send('eza+@eza.com', email, 'Welcome To Our Family', 'Congratulations, You are now an official EZA+ Member', html)
                     const encrypted = bcrypt.genSaltSync(10);
                     const hashedPassword = bcrypt.hashSync(req.body.Password, encrypted);
                     req.body.Password = hashedPassword
@@ -77,7 +83,9 @@ UserRegistration = async function (req, res) {
                     return res.status(400).send({ status: 'failure', message: 'Email Already Exists' })
                 }
                 try {
-                    const sendMail = await EmailAdapter.send('mado', email, 'Welcome To Our Family', 'Congratulations, You are now an official EZA+ Member')
+                    const html = fs.readFileSync(path.resolve(__dirname, 'ResetPasswordTemplate.html'), 'utf8').toString()
+                        .replace(/\$\{token\}/g, `http://ezaplus.com`)
+                    const sendMail = await EmailAdapter.send('eza+@eza.com', email, '', html)
                     const encrypted = bcrypt.genSaltSync(10);
                     const hashedPassword = bcrypt.hashSync(req.body.Password, encrypted);
                     req.body.Password = hashedPassword
@@ -205,10 +213,112 @@ activateAccount = async function (req, res) {
         res.status(422).send({ status: 'failure', message: 'Update Profile Failed' });
     }
 };
+ResetPassword = async function (req, res) {
+    try {
+        const validation = req.body && req.body.Email != null
+        if (!validation) {
+            return res.status(400).send({ status: 'failure', message: 'Params are missing' })
+        }
+        else {
+            const email = req.body.Email
+            const user = await User.findOne({ 'Email': req.body.Email });
+            if (user.User_Category === 'Student') {
+                if (!req.body.student_id) {
+                    return res.status(400).send({ status: 'failure', message: 'Student ID Missing' })
+                }
+                if (!user || (req.body.student_id !== user.student_id)) {
+                    return res.status(400).send({ status: 'failure', message: 'Student ID Or Email Does Not Exist' })
+                }
+                try {
+                    const token = await crypto.randomBytes(20).toString('hex')
+                    await console.log(token)
+                    const html = fs.readFileSync(path.resolve(__dirname, 'ResetPasswordTemplate.html'), 'utf8').toString()
+                        .replace(/\$\{token\}/g, `http://ezaplus.com/resetStudentPassword/${token}`)
+                    const sendMail = await EmailAdapter.send('eza+@eza.com', email, 'Oh', 'No', html)
+                    const newUser = await User.updateOne({ 'Email': req.body.Email }, { token: token });
+                    res.status(200).send({ status: 'success', msg: 'An Email Has Been Sent To You To Reset Your Password' });
+                }
+                catch (e) {
+                    console.log(e)
+                    res.status(422).send({ status: 'failure', message: 'Reset Password Failed' });
+                }
+            }
+            else {
+                if (!user) {
+                    return res.status(400).send({ status: 'failure', message: 'Email Already Exists' })
+                }
+                try {
+                    const confirmPassword = req.body.confirmPassword
+                    const password = req.body.Password
+                    if (password !== confirmPassword) {
+                        return res.status(404).send({ status: 'failuer', msg: 'Password Does Not Match' });
+
+                    }
+                    const encrypted = bcrypt.genSaltSync(10);
+                    const hashedPassword = bcrypt.hashSync(req.body.Password, encrypted);
+                    req.body.Password = hashedPassword
+                    var dataToBeUpdated = {
+                        Password: req.body.Password,
+                    }
+                    const newUser = await User.updateOne({ 'Email': req.body.Email }, dataToBeUpdated);
+                    return res.status(200).send({ status: 'success', msg: 'Password Changed Successfully' });
+                }
+                catch (e) {
+                    console.log(e)
+                    res.status(422).send({ status: 'failure', message: 'Changing Password Failed' });
+                }
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(422).send({ status: 'failure', message: 'Changing Password Failed' });
+    }
+};
+ResetPasswordStudent = async function (req, res) {
+    try {
+        const validation = req.body && req.body.Email != null && req.params.token != null
+        if (!validation) {
+            return res.status(400).send({ status: 'failure', message: 'Params are missing' })
+        }
+        else {
+            if (!req.body.student_id) {
+                return res.status(400).send({ status: 'failure', message: 'Student ID Missing' })
+            }
+            const user = await User.findOne({ 'Email': req.body.Email });
+            if (!user) {
+                return res.status(400).send({ status: 'failure', message: 'Email Already Does not exist' })
+            }
+            const token = req.params.token
+            if (token !== user.token) {
+                return res.status(403).send({ status: 'failure', message: 'Access Forbidden ' })
+            }
+            const confirmPassword = req.body.confirmPassword
+            const password = req.body.Password
+            if (password !== confirmPassword) {
+                return res.status(404).send({ status: 'failuer', msg: 'Password Does Not Match' });
+
+            }
+            const encrypted = bcrypt.genSaltSync(10);
+            const hashedPassword = bcrypt.hashSync(req.body.Password, encrypted);
+            req.body.Password = hashedPassword
+            var dataToBeUpdated = {
+                Password: req.body.Password,
+            }
+            const newUser = await User.updateOne({ 'Email': req.body.Email }, dataToBeUpdated);
+            res.status(200).send({ status: 'success', msg: 'Password Changed Successfully' });
+
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(422).send({ status: 'failure', message: 'Changing Password Failed' });
+    }
+};
 module.exports = {
     UserRegistration,
     Login,
     UpdateUser,
     deleteProfile,
-    activateAccount
+    activateAccount,
+    ResetPasswordStudent,
+    ResetPassword
 }
