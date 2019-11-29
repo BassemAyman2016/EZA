@@ -6,10 +6,14 @@ const group = require('../controllers/groups');
 const middleware = require('../middleware/login')
 
 // a simple test url to check that all of our files are communicating correctly.
-router.post('/createGroup/:user_id',middleware.verifyToken, group.CreateGroup);
+router.post('/creategroup/:user_id',middleware.verifyToken, group.CreateGroup);
 router.delete('/deleteGroup/:user_id',middleware.verifyToken, group.DeleteGroup);
 router.get('/getAllGroups', group.GetALlGroups);
 router.post('/joinRequest/:user_id',middleware.verifyToken, group.JoinRequest);
 router.post('/acceptJoinRequest/:user_id',middleware.verifyToken, group.AcceptJoinRequest);
+router.get('/getAllGroupByCreator/:user_id',middleware.verifyToken, group.GetAllGroupByCreator);
+router.get('/getAllGroupByUser/:user_id',middleware.verifyToken, group.GetAllGroupByUser);
+router.get('/getAllUsersInGroup/:user_id/:group_id',middleware.verifyToken, group.GetAllUsersInGroup);
+router.delete('/doctorKickUser/:user_id',middleware.verifyToken, group.DoctorKickUser);
 
 module.exports = router;
