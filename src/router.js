@@ -10,6 +10,11 @@ export default new Router({
     mode: "history",
     routes: [{
             path: "/",
+            component: () =>
+                import ("./components/Login.vue")
+        },
+        {
+            path: "/home",
             component: DefaultLayout,
             children: [{
                     path: "",
@@ -33,6 +38,16 @@ export default new Router({
             path: "/1",
             component: () =>
                 import ("./components/View1.vue")
+        },
+        {
+            path: "/forgot",
+            component: () =>
+                import ("./components/ForgotPassword.vue")
+        },
+        {
+            path: "/registration",
+            component: () =>
+                import ("./components/Registration.vue")
         }
     ]
 });
