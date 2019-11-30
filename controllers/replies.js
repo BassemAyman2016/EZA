@@ -1,17 +1,21 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
-    // const passport = require('passport')
+// const passport = require('passport')
 const Post = require('../models/Post');
 const Group = require('../models/Group');
 const GroupUser = require('../models/GroupUser');
 const User = require('../models/User')
 const Reply = require('../models/Reply')
 const tokenKey = require('../config').secretOrKey
+const fs = require('fs')
+const path = require('path')
+const EmailAdapter = require('../helpers/mailAdapter')
+
 require('dotenv').config();
 
 
 
-CreateReply = async function(req, res) {
+CreateReply = async function (req, res) {
     try {
         const validation = req.body && req.body.Message != null
         if (!validation) {
@@ -41,18 +45,32 @@ CreateReply = async function(req, res) {
                 if (alreadyReplied) {
                     return res.status(400).send({ status: 'failure', message: 'you already posted this reply' });
                 } else {
-                    const replyObject = {
-                        Message: Message,
-                        user_id: user_id,
-                        group_id: groupId,
-                        post_id: req.params.post_id
+                    const getUserEmail = await User.findOne({ '_id': post.user_id })
+                    if (!getUserEmail) {
+                        return res.status(404).send({ status: 'failure', message: 'The User Posted this post may have removed it' });
                     }
-                    const createReply = await Reply.create(replyObject)
-                    const replyCreated = await Reply.findOne({ '_id': createReply._id });
-                    if (replyCreated) {
-                        res.status(200).send({ status: 'success', msg: 'Reply Created successfully', data: replyCreated });
-                    } else {
-                        return res.status(404).send({ status: 'failure', message: 'error occured while creating the reply' })
+                    try {
+                        const html = fs.readFileSync(path.resolve(__dirname, 'digestTemplate.html'), 'utf8').toString()
+                            .replace(/\$\{token\}/g, `http://localhost:8080/posts/${post._id}`)
+                            .replace(/\$\{token2\}/g, `User with this Information: Email: ${user.Email}, Name:${user.First_Name + ' ' + user.Last_Name} Replied On Your Post`)
+                        const sendMail = await EmailAdapter.send('eza+@eza.com', getUserEmail.Email, 'Activty', 'Digest', html)
+                        const replyObject = {
+                            Message: Message,
+                            user_id: user_id,
+                            group_id: groupId,
+                            post_id: req.params.post_id
+                        }
+                        const createReply = await Reply.create(replyObject)
+                        const replyCreated = await Reply.findOne({ '_id': createReply._id });
+                        if (replyCreated) {
+                            res.status(200).send({ status: 'success', msg: 'Reply Created successfully', data: replyCreated });
+                        } else {
+                            return res.status(404).send({ status: 'failure', message: 'error occured while creating the reply' })
+                        }
+                    }
+                    catch (e) {
+                        console.log(e)
+                        res.status(422).send({ status: 'failure', message: 'Reply Submission Failed' });
                     }
                 }
             }
@@ -63,7 +81,7 @@ CreateReply = async function(req, res) {
     }
 }
 
-DeleteReply = async function(req, res) {
+DeleteReply = async function (req, res) {
     try {
         if (req.user_id !== req.params.user_id) {
             return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
@@ -93,7 +111,7 @@ DeleteReply = async function(req, res) {
     }
 }
 
-GetAllRepliesToPost = async function(req, res) {
+GetAllRepliesToPost = async function (req, res) {
     try {
         if (req.user_id !== req.params.user_id) {
             return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
