@@ -17,7 +17,17 @@
               </div>
               <div class="row justify-center field-margin">
                 <div class="col-7">
-                  <q-input outlined v-model="Password" label="Password" />
+                  <q-input outlined v-model="Password" label="Password" type="password" />
+                </div>
+              </div>
+              <div class="row justify-center field-margin">
+                <div class="col-7">
+                  <q-input
+                    outlined
+                    v-model="ConfirmedPassword"
+                    label="Confirm Password"
+                    type="password"
+                  />
                 </div>
               </div>
               <div class="row justify-center field-margin-1" v-if="studentFlag">
@@ -79,7 +89,8 @@ export default {
       Password: "",
       SelectedCategory: null,
       studentFlag: false,
-      StudentID: ""
+      StudentID: "",
+      ConfirmedPassword: null
     };
   },
   methods: {
@@ -93,43 +104,52 @@ export default {
     },
 
     submitForm() {
-      axios
-        .post(
-          "http://localhost:3000/api/users/registration",
-          this.studentFlag
-            ? {
-                Email: this.Email,
-                Password: this.Password,
-                User_Category: this.SelectedCategory,
-                student_id: this.StudentID
-              }
-            : {
-                Email: this.Email,
-                Password: this.Password,
-                User_Category: this.SelectedCategory
-              }
-        )
-        .then(res => {
-          if (res.data.status == "success") {
+      if (this.Password === this.ConfirmedPassword) {
+        axios
+          .post(
+            "http://localhost:3000/api/users/registration",
+            this.studentFlag
+              ? {
+                  Email: this.Email,
+                  Password: this.Password,
+                  User_Category: this.SelectedCategory,
+                  student_id: this.StudentID
+                }
+              : {
+                  Email: this.Email,
+                  Password: this.Password,
+                  User_Category: this.SelectedCategory
+                }
+          )
+          .then(res => {
+            if (res.data.status == "success") {
+              this.$q.notify({
+                color: "teal",
+                message: "Registration was Successful , Please Login",
+                position: "top-right",
+                timeout: 1000
+              });
+              setTimeout(() => {
+                this.$router.push("/");
+              }, 2000);
+            }
+          })
+          .catch(() => {
             this.$q.notify({
-              color: "teal",
-              message: "Registration was Successful , Please Login",
+              color: "red-10",
+              message: "Error Occured , Try Again",
               position: "top-right",
               timeout: 1000
             });
-            setTimeout(() => {
-              this.$router.push("/");
-            }, 2000);
-          }
-        })
-        .catch(() => {
-          this.$q.notify({
-            color: "red-10",
-            message: "Error Occured , Try Again",
-            position: "top-right",
-            timeout: 1000
           });
+      } else {
+        this.$q.notify({
+          color: "red-10",
+          message: "Password doesn't match the Confirmed Password",
+          position: "top-right",
+          timeout: 1000
         });
+      }
     }
   }
 };

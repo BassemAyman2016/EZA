@@ -17,7 +17,13 @@
               </div>
               <div class="row justify-center field-margin-1">
                 <div class="col-7">
-                  <q-input outlined v-model="Password" label="Password" @keyup.enter="submitForm" />
+                  <q-input
+                    outlined
+                    v-model="Password"
+                    label="Password"
+                    @keyup.enter="submitForm"
+                    type="password"
+                  />
                 </div>
               </div>
               <div class="row justify-center link-padding">

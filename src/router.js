@@ -12,7 +12,7 @@ const router = new Router({
             path: "/",
             alias: '/login',
             component: () =>
-                import ("./components/Login.vue")
+                import ("./components/Sessions/Login.vue")
         },
         {
             path: "/home",
@@ -43,12 +43,18 @@ const router = new Router({
         {
             path: "/forgot",
             component: () =>
-                import ("./components/ForgotPassword.vue")
+                import ("./components/Sessions/ForgotPassword.vue")
         },
         {
             path: "/registration",
             component: () =>
-                import ("./components/Registration.vue")
+                import ("./components/Sessions/Registration.vue")
+        },
+        {
+            path: "/resetPassword/:resetToken",
+            props: true,
+            component: () =>
+                import ("./components/Sessions/PasswordReset.vue")
         }
     ]
 });
@@ -60,8 +66,10 @@ router.beforeEach((to, from, next) => {
         }
     } else {
         if (!sessionStorage.getItem("token")) {
-
-            next("/login");
+            if (to.path == '/forgot' || to.path == '/registration' || to.fullPath.includes("/resetPassword"))
+                next();
+            else
+                next("/login");
         }
 
     }
