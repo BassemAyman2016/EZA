@@ -6,32 +6,28 @@
           <div data-v-14623e48 class="item animated fadeIn" style="z-index: 2;">
             <div data-v-14623e48>
               <div data-v-14623e48 class="view">
-                <!---->
-                <!---->
-                <!---->
-                <video data-v-14623e48 autoplay="true" loop="loop" class="video-fluid d-block">
+                <video
+                  data-v-14623e48
+                  autoplay
+                  ref="videoRef"
+                  loop="loop"
+                  class="video-fluid d-block"
+                >
                   <source
                     data-v-14623e48
                     src="https://mdbootstrap.com/img/video/Lines.mp4"
                     type="video/mp4"
                   />
                 </video>
-                <div data-v-457711ef data-v-14623e48 class="mask rgba-black-light">
-                  <!---->
-                </div>
+                <div data-v-457711ef data-v-14623e48 class="mask rgba-black-light"></div>
                 <h1 class="font-weight-bold text-uppercase info-header">Welcome To EZA+</h1>
                 <a
                   target="_blank"
-                  href="https://mdbootstrap.com/getting-started/"
                   class="btn btn-unique btn-lg btn-rounded mr-0 waves-effect waves-light"
+                  @click="register"
                 >Sign up!</a>
-                <a
-                  target="_blank"
-                  href="https://mdbootstrap.com/getting-started/"
-                  class="btn btn-login btn-lg btn-rounded"
-                >Log In</a>
+                <a target="_blank" class="btn btn-login btn-lg btn-rounded" @click="login">Log In</a>
               </div>
-              <!---->
             </div>
           </div>
         </div>
@@ -55,6 +51,14 @@ export default {
   name: "VideoPage",
   data() {
     return {};
+  },
+  methods: {
+    login() {
+      this.$router.push("/login");
+    },
+    register() {
+      this.$router.push("/registration");
+    }
   }
 };
 </script>

@@ -9,7 +9,7 @@ Vue.use(Router);
 const router = new Router({
     mode: "history",
     routes: [{
-        path: "/",
+        path: "/login",
         alias: '/login',
         component: () =>
             import("./components/Sessions/Login.vue")
@@ -36,7 +36,7 @@ const router = new Router({
         ]
     },
     {
-        path: "/introPage",
+        path: "/",
         name: "Intro",
         component: transitionPage
     },
@@ -74,7 +74,7 @@ router.beforeEach((to, from, next) => {
             if (to.path == '/forgot' || to.path == '/registration' || to.fullPath.includes("/resetPassword"))
                 next();
             else
-                next("/login");
+                next("/");
         }
 
     }
