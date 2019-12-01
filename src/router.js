@@ -3,59 +3,64 @@ import Router from "vue-router";
 import DefaultLayout from "./layouts/Default.vue";
 import Home from "./views/Home.vue";
 import About from "./views/About.vue";
-
+import transitionPage from "./views/transitionPage.vue"
 Vue.use(Router);
 
 const router = new Router({
     mode: "history",
     routes: [{
-            path: "/",
-            alias: '/login',
-            component: () =>
-                import ("./components/Sessions/Login.vue")
+        path: "/",
+        alias: '/login',
+        component: () =>
+            import("./components/Sessions/Login.vue")
+    },
+    {
+        path: "/home",
+        component: DefaultLayout,
+        children: [{
+            path: "",
+            name: "home",
+            component: Home
         },
         {
-            path: "/home",
-            component: DefaultLayout,
-            children: [{
-                    path: "",
-                    name: "home",
-                    component: Home
-                },
-                {
-                    path: "/about",
-                    name: "about",
-                    component: About
-                },
-                {
-                    path: "/2",
-                    name: "view2",
-                    component: () =>
-                        import ("./components/View2.vue")
-                }
-            ]
+            path: "/about",
+            name: "about",
+            component: About
         },
         {
-            path: "/1",
+            path: "/2",
+            name: "view2",
             component: () =>
-                import ("./components/View1.vue")
-        },
-        {
-            path: "/forgot",
-            component: () =>
-                import ("./components/Sessions/ForgotPassword.vue")
-        },
-        {
-            path: "/registration",
-            component: () =>
-                import ("./components/Sessions/Registration.vue")
-        },
-        {
-            path: "/resetPassword/:resetToken",
-            props: true,
-            component: () =>
-                import ("./components/Sessions/PasswordReset.vue")
+                import("./components/View2.vue")
         }
+        ]
+    },
+    {
+        path: "/introPage",
+        name: "Intro",
+        component: transitionPage
+    },
+    {
+        path: "/1",
+        component: () =>
+            import("./components/View1.vue")
+    },
+    {
+        path: "/forgot",
+        component: () =>
+            import("./components/Sessions/ForgotPassword.vue")
+    },
+    {
+        path: "/registration",
+        component: () =>
+            import("./components/Sessions/Registration.vue")
+    },
+    {
+        path: "/resetPassword/:resetToken",
+        props: true,
+        component: () =>
+            import("./components/Sessions/PasswordReset.vue")
+    }
     ]
 });
 
