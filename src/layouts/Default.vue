@@ -11,11 +11,9 @@
           icon="fas fa-bars"
         />
 
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
+        <q-toolbar-title>Quasar App</q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-icon name="fas fa-user" class="account-icon" @click="logout" />
       </q-toolbar>
     </q-header>
 
@@ -57,12 +55,7 @@
             <q-item-label caption>quasar.dev</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          href="https://github.com/quasarframework/"
-        >
+        <q-item clickable tag="a" target="_blank" href="https://github.com/quasarframework/">
           <q-item-section avatar>
             <q-icon name="fas fa-code" />
           </q-item-section>
@@ -71,12 +64,7 @@
             <q-item-label caption>github.com/quasarframework</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          href="https://chat.quasar.dev"
-        >
+        <q-item clickable tag="a" target="_blank" href="https://chat.quasar.dev">
           <q-item-section avatar>
             <q-icon name="fas fa-comments" />
           </q-item-section>
@@ -85,12 +73,7 @@
             <q-item-label caption>chat.quasar.dev</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          href="https://forum.quasar.dev"
-        >
+        <q-item clickable tag="a" target="_blank" href="https://forum.quasar.dev">
           <q-item-section avatar>
             <q-icon name="far fa-clipboard" />
           </q-item-section>
@@ -99,12 +82,7 @@
             <q-item-label caption>forum.quasar.dev</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          href="https://twitter.com/quasarframework"
-        >
+        <q-item clickable tag="a" target="_blank" href="https://twitter.com/quasarframework">
           <q-item-section avatar>
             <q-icon name="fab fa-twitter" />
           </q-item-section>
@@ -130,6 +108,20 @@ export default {
     return {
       leftDrawerOpen: this.$q.platform.is.desktop
     };
+  },
+  methods: {
+    logout() {
+      sessionStorage.removeItem("token");
+      this.$router.push("/");
+    }
   }
 };
 </script>
+<style scoped>
+.account-icon {
+  font-size: 20px;
+}
+.account-icon:hover {
+  cursor: pointer;
+}
+</style>

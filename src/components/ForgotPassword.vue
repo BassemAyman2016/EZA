@@ -7,9 +7,7 @@
             <div class="col">
               <div class="row justify-center">
                 <div class="col-shrink">
-                  <q-card-section style="font-size:30px; padding:45px;"
-                    >Reset Password</q-card-section
-                  >
+                  <q-card-section style="font-size:30px; padding:45px;">Reset Password</q-card-section>
                 </div>
               </div>
               <div class="row justify-center field-margin">
@@ -20,42 +18,10 @@
 
               <div class="row justify-center" style="margin-bottom:20px">
                 <div class="col-7">
-                  <q-btn
-                    color="primary"
-                    label="Submit"
-                    class="full-width"
-                    @click="showNotif('top-right')"
-                  />
+                  <q-btn color="primary" label="Submit" class="full-width" @click="submitForm" />
                 </div>
               </div>
             </div>
-
-            <!-- <div class="row justify-center">
-              <div class="col-shrink">
-                <q-card-section style="font-size:30px;">Login</q-card-section>
-              </div>
-            </div>
-
-            <div class="row justify-center">
-              <div class="col-shrink">
-                <q-input
-                  v-model="ph"
-                  label="Email"
-                  placeholder="Placeholder"
-                  hint="With placeholder"
-                />
-              </div>
-            </div>
-            <div class="row justify-center">
-              <div class="col-shrink">
-                <q-input
-                  v-model="ph"
-                  label="Password"
-                  placeholder="Placeholder"
-                  hint="With placeholder"
-                />
-              </div>
-            </div>-->
           </q-card>
         </div>
       </div>
@@ -63,13 +29,13 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 // import axios from "axios";
 export default {
   name: "Login",
   data() {
     return {
       Email: "",
-      Password: "",
       message: {
         color: "teal",
         message: "Password Reset Email Sent!!"
@@ -88,6 +54,33 @@ export default {
         multiLine,
         timeout: 1000
       });
+    },
+    submitForm() {
+      axios
+        .put("http://localhost:3000/api/sessions/requestResetPassword", {
+          Email: this.Email
+        })
+        .then(res => {
+          if (res.data.status == "success") {
+            this.$q.notify({
+              color: "teal",
+              message: "Password reset email sent , please check your inbox",
+              position: "top-right",
+              timeout: 1000
+            });
+            setTimeout(() => {
+              this.$router.push("/");
+            }, 1500);
+          }
+        })
+        .catch(() => {
+          this.$q.notify({
+            color: "red-10",
+            message: "Error occured , please try again",
+            position: "top-right",
+            timeout: 1000
+          });
+        });
     }
   }
 };
