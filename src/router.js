@@ -6,10 +6,16 @@ import About from "./views/About.vue";
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
     mode: "history",
     routes: [{
             path: "/",
+            alias: '/login',
+            component: () =>
+                import ("./components/Login.vue")
+        },
+        {
+            path: "/home",
             component: DefaultLayout,
             children: [{
                     path: "",
@@ -33,6 +39,33 @@ export default new Router({
             path: "/1",
             component: () =>
                 import ("./components/View1.vue")
+        },
+        {
+            path: "/forgot",
+            component: () =>
+                import ("./components/ForgotPassword.vue")
+        },
+        {
+            path: "/registration",
+            component: () =>
+                import ("./components/Registration.vue")
         }
     ]
 });
+
+router.beforeEach((to, from, next) => {
+    if (to.fullPath === "/login" || to.fullPath === "/") {
+        if (sessionStorage.getItem("token")) {
+            next('/home');
+        }
+    } else {
+        if (!sessionStorage.getItem("token")) {
+
+            next("/login");
+        }
+
+    }
+    next();
+});
+
+export default router;
