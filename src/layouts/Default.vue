@@ -11,13 +11,13 @@
           icon="fas fa-bars"
         />
 
-        <q-toolbar-title>Quasar App</q-toolbar-title>
+        <q-toolbar-title>EZA+</q-toolbar-title>
 
         <q-icon name="fas fa-user" class="account-icon" @click="logout" />
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" bordered content-class="bg-grey-2">
+    <q-drawer v-model="leftDrawerOpen" bordered content-class="bg-grey-1">
       <q-list>
         <q-item-label header>Navigation</q-item-label>
         <q-item to="/" exact>
