@@ -360,8 +360,8 @@ getRequests = async function (req, res) {
             if (!user) {
                 return res.status(404).send({ status: 'failure', message: 'User Not Found' })
             }
-            const getUserGroup = await Group.find({Created_By:req.user_id})
-            if (!getUserGroup || (getUserGroup && getUserGroup._id !== req.params.group_id)) {
+            const getUserGroup = await Group.findOne({'Created_By':req.user_id , '_id': req.params.group_id})
+            if (!getUserGroup) {
                 return res.status(401).send({ status: 'failure', message: 'Unauthorized access you do not belong to this group' })
             }
             const allUsersinGroup = await GroupUser.find({ group_id: req.params.group_id, Pending: true }).populate({ path: 'user_id' })
