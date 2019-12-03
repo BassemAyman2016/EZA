@@ -345,7 +345,33 @@ DoctorKickUser = async function (req, res) {
         res.status(422).send({ status: 'failure', message: 'Deletion of Group Failed' });
     }
 };
+getRequests = async function (req, res) {
+    try {
+        const validation = req.params
+        if (!validation) {
+            return res.status(400).send({ status: 'failure', message: 'Params Missing' });
 
+        } else {
+            if (req.role !== 'Doctor') {
+                return res.status(403).send({ status: 'failure', message: 'Access Forbidden' })
+            }
+            const user = await User.findOne({ '_id': req.user_id })
+            if (!user) {
+                return res.status(404).send({ status: 'failure', message: 'User Not Found' })
+            }
+            const getUserGroup = await Group.find({Created_By:req.user_id})
+            if (!getUserGroup || (getUserGroup && getUserGroup._id !== req.params.group_id)) {
+                return res.status(401).send({ status: 'failure', message: 'Unauthorized access you do not belong to this group' })
+            }
+            const allUsersinGroup = await GroupUser.find({ group_id: req.params.group_id, Pending: true }).populate({ path: 'user_id' })
+            res.status(200).send({ status: 'success', requests:allUsersinGroup});
+
+        }
+    } catch (e) {
+        console.log(e)
+        res.status(422).send({ status: 'failure', message: 'Deletion of Group Failed' });
+    }
+};
 
 module.exports = {
     CreateGroup,
@@ -356,5 +382,6 @@ module.exports = {
     GetAllGroupByCreator,
     GetAllGroupByUser,
     GetAllUsersInGroup,
-    DoctorKickUser
+    DoctorKickUser,
+    getRequests
 }
