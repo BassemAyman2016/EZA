@@ -51,7 +51,9 @@
             <q-icon name="fas fa-graduation-cap" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ group.Name }}</q-item-label>
+            <q-item-label @click="groupClicked(group)">{{
+              group.Name
+            }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -88,6 +90,11 @@ export default {
     logout() {
       sessionStorage.removeItem("token");
       this.$router.push("/");
+    },
+    groupClicked(group) {
+      this.$store.commit("setCurrentGroup", group);
+      this.$store.dispatch("fetchGroupPosts", group._id);
+      this.$router.push("/posts");
     }
   },
   created() {
