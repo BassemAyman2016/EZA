@@ -67,6 +67,7 @@ DeleteGroup = async function(req, res) {
 
             const { Name } = req.body;
             const group = await Group.findOne({ 'Name': Name });
+            const userDeleted = await GroupUser.remove({'group_id':group.group_id})
             if (group.Created_By === req.user_id) {
                 await Group.deleteOne({ Name });
                 res.status(200).send({ status: 'success', msg: 'Group Deleted successfully' });
