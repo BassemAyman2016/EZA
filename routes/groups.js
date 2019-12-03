@@ -10,6 +10,7 @@ router.post('/creategroup/:user_id',middleware.verifyToken, group.CreateGroup);
 router.delete('/deleteGroup/:user_id',middleware.verifyToken, group.DeleteGroup);
 router.get('/getAllGroups', group.GetALlGroups);
 router.post('/joinRequest/:user_id',middleware.verifyToken, group.JoinRequest);
+router.get('/requests/:group_id',middleware.verifyToken, group.getRequests);
 router.post('/acceptJoinRequest/:user_id',middleware.verifyToken, group.AcceptJoinRequest);
 router.get('/getAllGroupByCreator/:user_id',middleware.verifyToken, group.GetAllGroupByCreator);
 router.get('/getAllGroupByUser/:user_id',middleware.verifyToken, group.GetAllGroupByUser);
