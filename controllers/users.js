@@ -122,13 +122,9 @@ UpdateUser = async function (req, res) {
             if (user.Deleted === true) { // Deactivated send message to activate
                 return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
             } else {
-                const encrypted = bcrypt.genSaltSync(10);
-                const hashedPassword = bcrypt.hashSync(req.body.Password, encrypted);
-                req.body.Password = hashedPassword
                 if (user.User_Category === 'Student') {
                     dataToBeUpdated = {
                         Email: req.body.Email,
-                        Password: req.body.Password,
                         phone_number: req.body.phone_number,
                         First_Name: req.body.First_Name,
                         Last_Name: req.body.Last_Name,
@@ -139,7 +135,6 @@ UpdateUser = async function (req, res) {
                 else {
                     dataToBeUpdated = {
                         Email: req.body.Email,
-                        Password: req.body.Password,
                         phone_number: req.body.phone_number,
                         First_Name: req.body.First_Name,
                         Last_Name: req.body.Last_Name,

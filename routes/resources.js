@@ -7,5 +7,6 @@ const middleware = require('../middleware/login')
 
 // a simple test url to check that all of our files are communicating correctly.
 router.post('/:group_id', middleware.verifyToken, resources.addResource);
-router.delete('/:resource_id/groups/:group_id', middleware.verifyToken, resources.removeResource)
+router.delete('/:resource_id/groups/:group_id', middleware.verifyToken, resources.removeResource);
+
 module.exports = router;
