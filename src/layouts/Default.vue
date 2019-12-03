@@ -80,7 +80,7 @@ export default {
       if (this.Role == "Doctor") {
         return this.$store.getters.getMyGroups;
       } else {
-        return this.$store.getters.getAllGtoups;
+        return this.$store.getters.getStudentGroups;
       }
     }
   },
@@ -89,6 +89,11 @@ export default {
       sessionStorage.removeItem("token");
       this.$router.push("/");
     }
+  },
+  created() {
+    this.$store.dispatch("fetchAllGroups");
+    this.$store.dispatch("fetchMyGroups");
+    this.$store.dispatch("fetchStudentGroups");
   }
 };
 </script>

@@ -11,7 +11,8 @@ export default new Vuex.Store({
     state: {
         UserData: null,
         AllGroups: [],
-        MyGroups: []
+        MyGroups: [],
+        StudentGroups: []
     },
     getters: {
         getUserData(state) {
@@ -22,6 +23,9 @@ export default new Vuex.Store({
         },
         getMyGroups(state) {
             return state.MyGroups;
+        },
+        getStudentGroups(state) {
+            return state.StudentGroups;
         }
     },
     mutations: {
@@ -33,6 +37,9 @@ export default new Vuex.Store({
         },
         setMyGroups(state, myGroups) {
             state.MyGroups = myGroups;
+        },
+        setStudentGroups(state, studentGroups) {
+            state.StudentGroups = studentGroups;
         }
     },
     actions: {
@@ -59,6 +66,21 @@ export default new Vuex.Store({
                 .then(res => {
                     if (res.data.status == "success") {
                         context.commit("setMyGroups", res.data.data);
+                    }
+                });
+        },
+        async fetchStudentGroups(context) {
+            var user_id = context.getters.getUserData.id;
+            await axios
+                .get(`http://localhost:3000/api/groups/getAllGroupByUser/${user_id}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: sessionStorage.getItem("token")
+                    }
+                })
+                .then(res => {
+                    if (res.data.status == "success") {
+                        context.commit("setStudentGroups", res.data.data);
                     }
                 });
         }

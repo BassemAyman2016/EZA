@@ -6,7 +6,7 @@
         v-for="(group, index) in Groups"
         :key="index"
       >
-        <q-card class="my-card" :class="getRandomColor(index)">
+        <q-card class="my-card" :class="getRandomColor()">
           <q-card-section>
             <div class="text-h6">{{ group.Name }}</div>
             <!-- <div class="text-subtitle2">by John Doe</div> -->
@@ -62,7 +62,11 @@ export default {
     this.$store.dispatch("fetchAllGroups");
   },
   methods: {
-    getRandomColor(number) {
+    getRandomColor() {
+      var number = Math.floor(Math.random() * 100);
+      if (number % 7 == 0) return " bg-pink-5 text-white";
+      if (number % 10 == 0) return " bg-light-blue-4 text-white";
+      if (number % 9 == 0) return " bg-deep-purple-6 text-white";
       if (number % 3 == 0) return " bg-red-6 text-white";
       if (number % 4 == 0) return "bg-green-10 text-white";
       if (number % 2 == 0) return "bg-primary text-white";
@@ -75,19 +79,10 @@ export default {
     async JoinGroup(selectedGroup) {
       var user_id = this.$store.getters.getUserData.id;
       var token = sessionStorage.getItem("token");
-      await api
-        .post(
-          `/groups/joinRequest/${user_id}`,
-          {
-            Name: selectedGroup.Name
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token
-            }
-          }
-        )
+      await api()
+        .post(`/groups/joinRequest/${user_id}`, {
+          Name: selectedGroup.Name
+        })
         .then(res => {
           if (res.data.status == "success") {
             this.$q.notify({
@@ -101,6 +96,7 @@ export default {
           }
         })
         .catch(err => {
+          console.log(err);
           if (err.message == "You  Already  Requested to Enter This Group") {
             this.$q.notify({
               color: "red-10",
