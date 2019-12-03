@@ -46,11 +46,7 @@ CreateGroup = async function (req, res) {
 };
 DeleteGroup = async function (req, res) {
     try {
-        const validation = req.body && req.body.Name != null
-        if (!validation) {
-            return res.status(400).send({ status: 'failure', message: 'Params Missing' });
-
-        } else {
+     
             if (req.user_id !== req.params.user_id) {
                 return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
             }
@@ -65,18 +61,17 @@ DeleteGroup = async function (req, res) {
                 return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
             }
 
-            const { Name } = req.body;
-            const group = await Group.findOne({ 'Name': Name });
-            const userDeleted = await GroupUser.remove({'group_id':group.group_id})
-            if (group.Created_By === req.user_id) {
-                await Group.deleteOne({ Name });
+            const group = await Group.findOne({ '_id': req.params.group_id });
+            const userDeleted = await GroupUser.remove({'group_id':req.params.group_id})
+            if (group.Created_By === req.params.user_id) {
+                await Group.deleteOne({ '_id': req.params.group_id });
                 res.status(200).send({ status: 'success', msg: 'Group Deleted successfully' });
             } else {
                 return res.status(404).send({ status: 'failure', message: 'This group is not created by you' })
             }
 
 
-        }
+        
     } catch (e) {
         console.log(e)
         res.status(422).send({ status: 'failure', message: 'Deletion of Group Failed' });
