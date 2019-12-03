@@ -50,6 +50,12 @@ const router = new Router({
                     name: "DoctorGroups",
                     component: () =>
                         import ("./components/Groups/DoctorGroups.vue")
+                },
+                {
+                    path: "/posts",
+                    name: "Posts",
+                    component: () =>
+                        import ("./components/Posts/Posts.vue")
                 }
             ]
         },
