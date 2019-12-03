@@ -56,6 +56,12 @@ const router = new Router({
                     name: "Posts",
                     component: () =>
                         import ("./components/Posts/Posts.vue")
+                },
+                {
+                    path: "/account",
+                    name: "Account",
+                    component: () =>
+                        import ("./components/Account.vue")
                 }
             ]
         },
