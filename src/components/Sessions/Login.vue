@@ -7,7 +7,9 @@
             <div class="col">
               <div class="row justify-center">
                 <div class="col-shrink">
-                  <q-card-section style="font-size:30px; padding:45px;">Login</q-card-section>
+                  <q-card-section style="font-size:30px; padding:45px;"
+                    >Login</q-card-section
+                  >
                 </div>
               </div>
               <div class="row justify-center field-margin">
@@ -28,10 +30,9 @@
               </div>
               <div class="row justify-center link-padding">
                 <div class="col-7">
-                  <div
-                    class="forgot-password"
-                    @click="$router.push('/forgot')"
-                  >Forgot Password ? Click here to reset</div>
+                  <div class="forgot-password" @click="$router.push('/forgot')">
+                    Forgot Password ? Click here to reset
+                  </div>
                 </div>
               </div>
               <div class="row justify-center field-margin-1">
@@ -39,12 +40,19 @@
                   <div
                     class="forgot-password"
                     @click="$router.push('/registration')"
-                  >Not a Member ? Click here to register</div>
+                  >
+                    Not a Member ? Click here to register
+                  </div>
                 </div>
               </div>
               <div class="row justify-center" style="margin-bottom:20px">
                 <div class="col-7">
-                  <q-btn color="primary" label="Submit" class="full-width" @click="submitForm" />
+                  <q-btn
+                    color="primary"
+                    label="Submit"
+                    class="full-width"
+                    @click="submitForm"
+                  />
                 </div>
               </div>
             </div>
@@ -77,6 +85,10 @@ export default {
             sessionStorage.setItem("role", res.data.role);
             delete res.data.status;
             this.$store.commit("setUserData", res.data);
+            this.$store.dispatch("fetchAllGroups");
+            if (res.data.role == "Student") {
+              this.$store.dispatch("fetchStudentGroups");
+            }
             this.$router.push("/home");
           } else {
             this.$q.notify({

@@ -10,7 +10,7 @@ const router = new Router({
     mode: "history",
     routes: [{
             path: "/",
-            alias: '/login',
+            alias: "/login",
             component: () =>
                 import ("./components/Sessions/Login.vue")
         },
@@ -18,7 +18,7 @@ const router = new Router({
             path: "/home",
             component: DefaultLayout,
             children: [{
-                    path: "",
+                    path: "/",
                     name: "home",
                     component: Home
                 },
@@ -32,6 +32,24 @@ const router = new Router({
                     name: "view2",
                     component: () =>
                         import ("./components/View2.vue")
+                },
+                {
+                    path: "/groups",
+                    name: "Groups",
+                    component: () =>
+                        import ("./components/Groups/Groups.vue")
+                },
+                {
+                    path: "/createGroup",
+                    name: "CreateGroup",
+                    component: () =>
+                        import ("./components/Groups/CreateGroup.vue")
+                },
+                {
+                    path: "/myGroups",
+                    name: "DoctorGroups",
+                    component: () =>
+                        import ("./components/Groups/DoctorGroups.vue")
                 }
             ]
         },
@@ -62,16 +80,18 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
     if (to.fullPath === "/login" || to.fullPath === "/") {
         if (sessionStorage.getItem("token")) {
-            next('/home');
+            next("/home");
         }
     } else {
         if (!sessionStorage.getItem("token")) {
-            if (to.path == '/forgot' || to.path == '/registration' || to.fullPath.includes("/resetPassword"))
+            if (
+                to.path == "/forgot" ||
+                to.path == "/registration" ||
+                to.fullPath.includes("/resetPassword")
+            )
                 next();
-            else
-                next("/login");
+            else next("/login");
         }
-
     }
     next();
 });
