@@ -382,14 +382,22 @@ getRequests = async function (req, res) {
                 if (!user) {
                     return res.status(404).send({ status: 'failure', message: 'User Not Found' })
                 }
-               
+               console.log(req.body.email);
                 const group = await Group.findOne({ '_id': req.params.group_id });
                 if (group.Created_By === req.user_id) {
-                    const userToInvite =await User.findOne({"email":req.body.email})
-                    if(!userToInvite)
-                    {   return res.status(404).send({ status: 'failure', message: 'User Not Found' })}
+                    const userToInvite =await User.findOne({"Email":req.body.email})
 
-                    const inviteUser = await GroupUser.create({"group_id":req.params.group_id , "user_id":userToInvite._id})
+                    if(!userToInvite)
+                    {   
+                        return res.status(404).send({ status: 'failure', message: 'User Not Found' })}
+
+                    const found = await GroupUser.findOne({"group_id":req.params.group_id , "user_id":userToInvite._id})
+                    if(!found)
+                    { 
+                        await GroupUser.create({"group_id":req.params.group_id , "user_id":userToInvite._id,"Pending":false})
+                    }   
+                    else
+                    return res.status(404).send({ status: 'failure', message: 'User Already requested to join' })
             
                     res.status(200).send({ status: 'success', msg: 'User joined successfully'});
                 } else {
