@@ -16,5 +16,6 @@ router.get('/getAllGroupByCreator/:user_id',middleware.verifyToken, group.GetAll
 router.get('/getAllGroupByUser/:user_id',middleware.verifyToken, group.GetAllGroupByUser);
 router.get('/getAllUsersInGroup/:user_id/:group_id',middleware.verifyToken, group.GetAllUsersInGroup);
 router.delete('/doctorKickUser/:user_id',middleware.verifyToken, group.DoctorKickUser);
+router.post('/doctorInviteUser/:user_id/:group_id',middleware.verifyToken,group.DoctorInviteUser);
 
 module.exports = router;

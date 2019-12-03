@@ -359,7 +359,7 @@ getRequests = async function (req, res) {
             if (!getUserGroup) {
                 return res.status(401).send({ status: 'failure', message: 'Unauthorized access you do not belong to this group' })
             }
-            const allUsersinGroup = await GroupUser.find({ group_id: req.params.group_id, Pending: true }).populate({ path: 'user_id' })
+            const allUsersinGroup = await GroupUser.find({ group_id: req.params.group_id, Pending: true }).populate({ path: 'user_id' }).populate({ path: 'group_id' })
             res.status(200).send({ status: 'success', requests:allUsersinGroup});
 
         }
@@ -368,7 +368,41 @@ getRequests = async function (req, res) {
         res.status(422).send({ status: 'failure', message: 'Deletion of Group Failed' });
     }
 };
+    DoctorInviteUser = async function (req, res) {
+        try {
+            const validation = req.params && req.body.email !== null;
+            if (!validation) {
+                return res.status(400).send({ status: 'failure', message: 'Params Missing' });
+    
+            } else {
+                if (req.role !== 'Doctor') {
+                    return res.status(403).send({ status: 'failure', message: 'Access Forbidden' })
+                }
+                const user = await User.findOne({ '_id': req.user_id })
+                if (!user) {
+                    return res.status(404).send({ status: 'failure', message: 'User Not Found' })
+                }
+               
+                const group = await Group.findOne({ '_id': req.params.group_id });
+                if (group.Created_By === req.user_id) {
+                    const userToInvite =await User.findOne({"email":req.body.email})
+                    if(!userToInvite)
+                    {   return res.status(404).send({ status: 'failure', message: 'User Not Found' })}
 
+                    const inviteUser = await GroupUser.create({"group_id":req.params.group_id , "user_id":userToInvite._id})
+            
+                    res.status(200).send({ status: 'success', msg: 'User joined successfully'});
+                } else {
+                    return res.status(404).send({ status: 'failure', message: 'This group is not created by you' })
+                }
+               
+    
+            }
+        } catch (e) {
+            console.log(e)
+            res.status(422).send({ status: 'failure', message: 'Invitation for Group Failed' });
+        }
+    };
 module.exports = {
     CreateGroup,
     DeleteGroup,
@@ -379,5 +413,6 @@ module.exports = {
     GetAllGroupByUser,
     GetAllUsersInGroup,
     DoctorKickUser,
-    getRequests
+    getRequests,
+    DoctorInviteUser
 }
