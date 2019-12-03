@@ -5,10 +5,9 @@ const post = require('../controllers/posts');
 
 const middleware = require('../middleware/login')
 
-router.post('/createPost/:user_id/and/:group_id', middleware.verifyToken, post.CreatePost);
-// router.delete('/deleteGroup/:user_id',middleware.verifyToken, group.DeleteGroup);
-// router.get('/getAllGroups', group.GetALlGroups);
-// router.post('/joinRequest/:user_id',middleware.verifyToken, group.JoinRequest);
+router.post('/createPost/:user_id/:group_id', middleware.verifyToken, post.CreatePost); //I should be able to add post
+router.post('/deletePost/:user_id/:post_id', middleware.verifyToken, post.DeletePost);
+router.get('/getGroupPosts/:user_id/:group_id', middleware.verifyToken, post.GetAllGroupPosts);
 // router.post('/acceptJoinRequest/:user_id',middleware.verifyToken, group.AcceptJoinRequest);
 
 module.exports = router;

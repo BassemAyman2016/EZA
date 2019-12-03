@@ -9,4 +9,7 @@ const middleware = require('../middleware/login')
 router.post('/login', user.Login);
 router.put('/deactivate/:user_id', middleware.verifyToken, user.deleteProfile)
 router.put('/activate/:user_id', middleware.verifyToken, user.activateAccount)
+router.put('/resetPassword/:token', user.ResetPasswordStudent)
+router.put('/requestResetPassword', user.ResetPassword)
+
 module.exports = router;
