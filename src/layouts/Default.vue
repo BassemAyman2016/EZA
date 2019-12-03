@@ -20,75 +20,38 @@
     <q-drawer v-model="leftDrawerOpen" bordered content-class="bg-grey-1">
       <q-list>
         <q-item-label header>Navigation</q-item-label>
-        <q-item to="/" exact>
+        <q-item to="/groups" exact>
           <q-item-section avatar>
             <q-icon name="fas fa-home" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Home</q-item-label>
+            <q-item-label>Groups</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/about" exact>
+        <q-item to="/mygroups" exact v-if="Role == 'Doctor'">
           <q-item-section avatar>
             <q-icon name="fas fa-info" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>About</q-item-label>
+            <q-item-label>My Groups</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/2" exact>
+        <q-item to="/createGroup" exact v-if="Role == 'Doctor'">
           <q-item-section avatar>
-            <q-icon name="fab fa-adobe" />
+            <q-icon name="fas fa-plus" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>View 2</q-item-label>
+            <q-item-label>Create Group</q-item-label>
           </q-item-section>
         </q-item>
 
-        <q-item-label header>Essential Links</q-item-label>
-        <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
+        <q-item-label header>My Groups</q-item-label>
+        <q-item clickable v-for="(group, index) in MyGroups" :key="index">
           <q-item-section avatar>
             <q-icon name="fas fa-graduation-cap" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Docs</q-item-label>
-            <q-item-label caption>quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://github.com/quasarframework/">
-          <q-item-section avatar>
-            <q-icon name="fas fa-code" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Github</q-item-label>
-            <q-item-label caption>github.com/quasarframework</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://chat.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="fas fa-comments" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Discord Chat Channel</q-item-label>
-            <q-item-label caption>chat.quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://forum.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="far fa-clipboard" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Forum</q-item-label>
-            <q-item-label caption>forum.quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://twitter.com/quasarframework">
-          <q-item-section avatar>
-            <q-icon name="fab fa-twitter" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Twitter</q-item-label>
-            <q-item-label caption>@quasarframework</q-item-label>
+            <q-item-label>{{ group.Name }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -108,6 +71,18 @@ export default {
     return {
       leftDrawerOpen: this.$q.platform.is.desktop
     };
+  },
+  computed: {
+    Role() {
+      return sessionStorage.getItem("role");
+    },
+    MyGroups() {
+      if (this.Role == "Doctor") {
+        return this.$store.getters.getMyGroups;
+      } else {
+        return this.$store.getters.getAllGtoups;
+      }
+    }
   },
   methods: {
     logout() {

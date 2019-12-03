@@ -77,6 +77,7 @@ export default {
             sessionStorage.setItem("role", res.data.role);
             delete res.data.status;
             this.$store.commit("setUserData", res.data);
+            this.$store.dispatch('fetchAllGroups')
             this.$router.push("/home");
           } else {
             this.$q.notify({
