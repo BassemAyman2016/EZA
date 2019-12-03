@@ -44,6 +44,14 @@
             <q-item-label>Create Group</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item to="/account" exact>
+          <q-item-section avatar>
+            <q-icon name="fas fa-user" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Account</q-item-label>
+          </q-item-section>
+        </q-item>
 
         <q-item-label header>My Groups</q-item-label>
         <q-item clickable v-for="(group, index) in MyGroups" :key="index">
@@ -51,9 +59,11 @@
             <q-icon name="fas fa-graduation-cap" />
           </q-item-section>
           <q-item-section>
-            <q-item-label @click="groupClicked(group)">{{
+            <q-item-label @click="groupClicked(group)">
+              {{
               group.Name
-            }}</q-item-label>
+              }}
+            </q-item-label>
           </q-item-section>
         </q-item>
       </q-list>

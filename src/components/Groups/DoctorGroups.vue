@@ -1,11 +1,7 @@
 <template>
   <div>
     <div class="row justify-center q-gutter-md">
-      <div
-        class="col-3 q-gutter-md"
-        v-for="(group, index) in MyGroups"
-        :key="index"
-      >
+      <div class="col-3 q-gutter-md" v-for="(group, index) in MyGroups" :key="index">
         <q-card class="my-card">
           <q-card-section>
             <div class="text-h6">{{ group.Name }}</div>
@@ -19,9 +15,7 @@
       <q-dialog v-model="confirm" persistent>
         <q-card>
           <q-card-section class="row items-center">
-            <span class="q-ml-sm"
-              >Are you sure you want to delete {{ selectedGroup.Name }} ?</span
-            >
+            <span class="q-ml-sm">Are you sure you want to delete {{ selectedGroup.Name }} ?</span>
           </q-card-section>
 
           <q-card-actions align="right">
@@ -32,13 +26,7 @@
               v-close-popup
               @click="DeleteGroup(selectedGroup)"
             />
-            <q-btn
-              flat
-              label="No"
-              color="primary"
-              v-close-popup
-              @click="selectedGroup = {}"
-            />
+            <q-btn flat label="No" color="primary" v-close-popup @click="selectedGroup = {}" />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -67,11 +55,9 @@ export default {
     },
     async DeleteGroup(selectedGroup) {
       var user_id = this.$store.getters.getUserData.id;
-      console.log(user_id);
+
       await api()
-        .delete(`/groups/deleteGroup/${user_id}`, {
-          Name: selectedGroup.Name
-        })
+        .delete(`/groups/deleteGroup/${user_id}/${selectedGroup._id}`)
         .then(res => {
           if (res.data.status == "success") {
             this.$q.notify({
@@ -80,12 +66,13 @@ export default {
               position: "top-right",
               timeout: 1000
             });
+            this.$store.dispatch("fetchMyGroups");
             this.confirm = false;
             this.selectedGroup = {};
           }
         })
         .catch(err => {
-          console.log(err.response);
+          console.log(err);
           this.$q.notify({
             color: "red-10",
             message: "Error Occured , Try Again",
