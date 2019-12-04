@@ -29,7 +29,8 @@ CreatePost = async function(req, res) {
             }
             const groupUser = await GroupUser.findOne({ 'group_id': req.params.group_id, 'user_id': req.params.user_id })
             if (!groupUser) {
-                return res.status(404).send({ status: 'failure', message: 'you are not part of this group' })
+                if (group.Created_By !== req.params.user_id)
+                    return res.status(404).send({ status: 'failure', message: 'You Are Not Part Of This Group' })
             }
             if (user.Deleted === true) { // Deactivated send message to activate
                 return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
