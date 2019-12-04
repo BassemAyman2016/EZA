@@ -74,7 +74,8 @@ DeletePost = async function(req, res) {
         if (!post) {
             return res.status(404).send({ status: 'failure', message: 'Post Not Found' })
         }
-        if (post.user_id === req.params.user_id) {
+
+        if (post.user_id.toString() === req.params.user_id) {
             if (user.Deleted === true) {
                 return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
             } else {
@@ -83,7 +84,16 @@ DeletePost = async function(req, res) {
                 res.status(200).send({ status: 'success', msg: 'Post Deleted successfully', data: deletedPost });
             }
         } else {
-            return res.status(404).send({ status: 'failure', message: 'you cannot delete this post' })
+            const group = await Group.findOne({ '_id': post.group_id })
+            if (group.Created_By == req.params.user_id) {
+                await Post.findOneAndUpdate({ _id: req.params.post_id }, { Deleted: true })
+                const deletedPost = await Post.find({ _id: req.params.post_id })
+                res.status(200).send({ status: 'success', msg: 'Post Deleted successfully', data: deletedPost });
+            } else {
+                console.log("here")
+                return res.status(404).send({ status: 'failure', message: 'you cannot delete this post' })
+            }
+
         }
     } catch (error) {
         console.log(error)
