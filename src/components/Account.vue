@@ -60,10 +60,34 @@
                     color="red-10"
                     label="Deactivate Profile"
                     class="full-width"
-                    @click="submitForm"
+                    @click="deactivateClicked"
                   />
                 </div>
               </div>
+              <q-dialog v-model="dialogFlag" persistent>
+                <q-card>
+                  <q-card-section class="row items-center">
+                    <span class="q-ml-sm">Are you sure you want to delete deactivate your account ?</span>
+                  </q-card-section>
+
+                  <q-card-actions align="right">
+                    <q-btn
+                      flat
+                      label="Yes"
+                      color="primary"
+                      v-close-popup
+                      @click="deactivatAccount"
+                    />
+                    <q-btn
+                      flat
+                      label="No"
+                      color="primary"
+                      v-close-popup
+                      @click="dialogFlag = false"
+                    />
+                  </q-card-actions>
+                </q-card>
+              </q-dialog>
             </div>
           </q-card>
         </div>
@@ -82,7 +106,8 @@ export default {
       phone_number: null,
       first_name: null,
       last_name: null,
-      student_id: null
+      student_id: null,
+      dialogFlag: false
     };
   },
   computed: {
@@ -91,52 +116,6 @@ export default {
     }
   },
   methods: {
-    submitForm() {
-      api()
-        .post(
-          "http://localhost:3000/api/users/registration",
-          this.studentFlag
-            ? {
-                Email: this.Email,
-                Password: this.Password,
-                User_Category: this.SelectedCategory,
-                student_id: this.StudentID
-              }
-            : {
-                Email: this.Email,
-                Password: this.Password,
-                User_Category: this.SelectedCategory
-              }
-        )
-        .then(res => {
-          if (res.data.status == "success") {
-            this.$q.notify({
-              color: "teal",
-              message: "Registration was Successful , Please Login",
-              position: "top-right",
-              timeout: 1000
-            });
-            setTimeout(() => {
-              this.$router.push("/");
-            }, 2000);
-          }
-        })
-        .catch(() => {
-          this.$q.notify({
-            color: "red-10",
-            message: "Error Occured , Try Again",
-            position: "top-right",
-            timeout: 1000
-          });
-        });
-
-      this.$q.notify({
-        color: "red-10",
-        message: "Password doesn't match the Confirmed Password",
-        position: "top-right",
-        timeout: 1000
-      });
-    },
     async fetchUserInfo() {
       var user_id = this.$store.getters.getUserData.id;
       await api()
@@ -212,6 +191,37 @@ export default {
           timeout: 1000
         });
       }
+    },
+    deactivateClicked() {
+      this.dialogFlag = true;
+    },
+    deactivatAccount() {
+      var user_id = this.$store.getters.getUserData.id;
+      console.log(user_id);
+      api()
+        .put(`/sessions/deactivate/${user_id}`)
+        .then(res => {
+          if (res.data.status == "success") {
+            this.$q.notify({
+              color: "teal",
+              message: "Profile Deactivated Successfully , Goodbye",
+              position: "top-right",
+              timeout: 1000
+            });
+            setTimeout(() => {
+              this.$store.commit("clearUserData");
+              this.$router.push("/");
+            }, 2000);
+          }
+        })
+        .catch(() => {
+          this.$q.notify({
+            color: "red-10",
+            message: "Error Occured , Try Again",
+            position: "top-right",
+            timeout: 1000
+          });
+        });
     }
   },
   created() {

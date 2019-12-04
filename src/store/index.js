@@ -54,6 +54,18 @@ export default new Vuex.Store({
         },
         setCurrentGroup(state, currentGroup) {
             state.CurrentGroup = currentGroup;
+        },
+        clearUserData(state) {
+            state.UserData = {}
+            state.AllGroups = []
+            state.MyGroups = []
+            state.StudentGroups = []
+            state.GroupPosts = []
+            state.CurrentGroup = null
+            sessionStorage.clear();
+        },
+        clearGroupPosts(state) {
+            state.GroupPosts = []
         }
     },
     actions: {
