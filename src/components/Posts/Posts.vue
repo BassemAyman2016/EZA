@@ -12,18 +12,20 @@
           </q-card-actions>
         </q-card>
       </div>
-      <div
-        class="col-3 q-gutter-md"
-        v-for="(group, index) in MyGroups"
-        :key="index"
-      >
+      <div class="col-3 q-gutter-md" v-for="(group, index) in MyGroups" :key="index">
         <q-card class="my-card">
           <q-card-section>
+            <div class="text-subtitle5">{{group.group_id.Name}}</div>
+            <div
+              class="text-subtitle1"
+              v-if="UserID!==group.user_id._id"
+            >{{group.user_id.First_Name?group.user_id.First_Name:group.user_id.Email}}</div>
+            <div class="text-subtitle1" v-else>You</div>
             <div class="text-h6">{{ group.Message }}</div>
             <!-- <div class="text-subtitle2">by John Doe</div> -->
           </q-card-section>
           <q-card-actions class="row justify-center">
-            <q-btn
+            <!-- <q-btn
               round
               color="primary"
               icon="fas fa-thumbs-up"
@@ -35,19 +37,14 @@
               color="red-8"
               icon="fas fa-thumbs-down"
               title="dislike"
-            />
-            <q-btn
-              round
-              color="green"
-              icon="fas fa-comment-dots"
-              title="comment"
-            />
+            />-->
+            <q-btn round color="green" icon="fas fa-comment-dots" title="comment" />
             <q-btn
               round
               color="red-10"
               icon="far fa-trash-alt"
               title="delete"
-              v-if="UserID == group.user_id"
+              v-if="UserID == group.user_id._id"
             />
           </q-card-actions>
         </q-card>
