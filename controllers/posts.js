@@ -111,7 +111,7 @@ GetAllGroupPosts = async function(req, res) {
         if (user.Deleted === true) {
             return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
         } else {
-            const allPosts = await Post.find({ group_id: req.params.group_id, Deleted: false })
+            const allPosts = await Post.find({ group_id: req.params.group_id, Deleted: false }).populate({ path: 'user_id' }).populate({ path: 'group_id' })
             res.status(200).send({ status: 'success', msg: 'Posts Fetched successfully', data: allPosts });
         }
     } catch (error) {
