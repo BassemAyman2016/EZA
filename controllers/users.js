@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
-// const passport = require('passport')
+    // const passport = require('passport')
 const User = require('../models/User');
 const tokenKey = require('../config').secretOrKey
 const EmailAdapter = require('../helpers/mailAdapter')
@@ -9,7 +9,7 @@ const path = require('path')
 const crypto = require('crypto')
 
 require('dotenv').config();
-Login = async function (req, res) {
+Login = async function(req, res) {
     try {
         const validation = req.body && req.body.Email != null && req.body.Password != null
         if (!validation) {
@@ -25,8 +25,7 @@ Login = async function (req, res) {
         if (match) {
             if (user.Deleted === true) {
                 return res.status(403).send({ status: 'failure', message: 'Account is currently deactivated request to activate your account through email' })
-            }
-            else {
+            } else {
                 const payload = {
                     id: user._id,
                     User_Category: user.User_Category
@@ -36,21 +35,19 @@ Login = async function (req, res) {
                 const token = jwt.sign(payload, tokenKey, { expiresIn: '3h' })
                 return res.status(200).send({ status: 'success', token: `bearer ${token}`, role: user.User_Category, id: user._id })
             }
-        }
-        else return res.status(400).send({ error: 'Wrong password' });
+        } else return res.status(400).send({ error: 'Wrong password' });
     } catch (e) {
         console.log(e)
         res.status(422).send({ status: 'failure', message: 'Sign In Failed' });
     }
 };
 
-UserRegistration = async function (req, res) {
+UserRegistration = async function(req, res) {
     try {
         const validation = req.body && req.body.Password != null && req.body.Email != null && req.body.User_Category != null
         if (!validation) {
             return res.status(400).send({ status: 'failure', message: 'Params are missing' })
-        }
-        else {
+        } else {
             const email = req.body.Email
             if (req.body.User_Category === 'Student') {
                 if (!req.body.student_id) {
@@ -71,13 +68,11 @@ UserRegistration = async function (req, res) {
                     const newUser = await User.create(req.body);
                     const userCreated = await User.findOne({ '_id': newUser._id })
                     res.status(200).send({ status: 'success', msg: 'User created successfully', data: userCreated });
-                }
-                catch (e) {
+                } catch (e) {
                     console.log(e)
                     res.status(422).send({ status: 'failure', message: 'User Creation Failed' });
                 }
-            }
-            else {
+            } else {
                 const user = await User.findOne({ 'Email': req.body.Email });
                 if (user) {
                     return res.status(400).send({ status: 'failure', message: 'Email Already Exists' })
@@ -93,8 +88,7 @@ UserRegistration = async function (req, res) {
                     const newUser = await User.create(req.body);
                     const userCreated = await User.findOne({ '_id': newUser._id })
                     res.status(200).send({ status: 'success', msg: 'User created successfully', data: userCreated });
-                }
-                catch (e) {
+                } catch (e) {
                     console.log(e)
                     res.status(422).send({ status: 'failure', message: 'User Creation Failed' });
                 }
@@ -105,13 +99,12 @@ UserRegistration = async function (req, res) {
         res.status(422).send({ status: 'failure', message: 'User Creation Failed' });
     }
 };
-UpdateUser = async function (req, res) {
+UpdateUser = async function(req, res) {
     try {
         const validation = req.body
         if (!validation) {
             return res.status(400).send({ status: 'failure', message: 'Params are missing' })
-        }
-        else {
+        } else {
             if (req.user_id !== req.params.user_id) {
                 return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
             }
@@ -131,8 +124,7 @@ UpdateUser = async function (req, res) {
                         Birth_Date: req.body.Birth_Date,
                         student_id: req.body.student_id,
                     }
-                }
-                else {
+                } else {
                     dataToBeUpdated = {
                         Email: req.body.Email,
                         phone_number: req.body.phone_number,
@@ -154,13 +146,12 @@ UpdateUser = async function (req, res) {
     }
 };
 
-deleteProfile = async function (req, res) {
+deleteProfile = async function(req, res) {
     try {
         const validation = req.body
         if (!validation) {
             return res.status(400).send({ status: 'failure', message: 'Params are missing' })
-        }
-        else {
+        } else {
             if (req.user_id !== req.params.user_id) {
                 return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
             }
@@ -181,13 +172,12 @@ deleteProfile = async function (req, res) {
         res.status(422).send({ status: 'failure', message: 'Update Profile Failed' });
     }
 };
-activateAccount = async function (req, res) {
+activateAccount = async function(req, res) {
     try {
         const validation = req.body
         if (!validation) {
             return res.status(400).send({ status: 'failure', message: 'Params are missing' })
-        }
-        else {
+        } else {
             if (req.user_id !== req.params.user_id) {
                 return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
             }
@@ -208,13 +198,12 @@ activateAccount = async function (req, res) {
         res.status(422).send({ status: 'failure', message: 'Update Profile Failed' });
     }
 };
-ResetPassword = async function (req, res) {
+ResetPassword = async function(req, res) {
     try {
         const validation = req.body && req.body.Email != null
         if (!validation) {
             return res.status(400).send({ status: 'failure', message: 'Params are missing' })
-        }
-        else {
+        } else {
             const email = req.body.Email
             const user = await User.findOne({ 'Email': req.body.Email });
 
@@ -228,8 +217,7 @@ ResetPassword = async function (req, res) {
                 const sendMail = await EmailAdapter.send('eza+@eza.com', email, 'Oh', 'No', html)
                 const newUser = await User.updateOne({ 'Email': req.body.Email }, { token: token });
                 return res.status(200).send({ status: 'success', msg: 'An Email Has Been Sent To You To Reset Your Password' });
-            }
-            catch (e) {
+            } catch (e) {
                 console.log(e)
                 res.status(422).send({ status: 'failure', message: 'Changing Password Failed' });
             }
@@ -240,13 +228,12 @@ ResetPassword = async function (req, res) {
         res.status(422).send({ status: 'failure', message: 'Changing Password Failed' });
     }
 };
-ResetPasswordStudent = async function (req, res) {
+ResetPasswordStudent = async function(req, res) {
     try {
         const validation = req.body && req.params.token != null
         if (!validation) {
             return res.status(400).send({ status: 'failure', message: 'Params are missing' })
-        }
-        else {
+        } else {
             const user = await User.findOne({ 'token': req.params.token });
             if (!user) {
                 return res.status(400).send({ status: 'failure', message: 'Forbidden Access Token Expired' })
@@ -274,6 +261,29 @@ ResetPasswordStudent = async function (req, res) {
         res.status(422).send({ status: 'failure', message: 'Changing Password Failed' });
     }
 };
+getUserInfo = async function(req, res) {
+    try {
+
+        if (req.user_id !== req.params.user_id) {
+            return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
+        }
+        const user = await User.findOne({ '_id': req.params.user_id })
+        if (!user) {
+            return res.status(404).send({ status: 'failure', message: 'User Not Found' })
+        }
+        if (user.Deleted === true) {
+            return res.status(401).send({ status: 'failure', message: 'Account Activated' })
+
+        } else {
+            const returnedUser = await User.findOne({ '_id': req.params.user_id, Deleted: false });
+            return res.status(200).send({ status: 'success', data: returnedUser });
+        }
+
+    } catch (error) {
+        console.log(error)
+        res.status(422).send({ status: 'failure', message: 'Get the Info Failed' });
+    }
+};
 module.exports = {
     UserRegistration,
     Login,
@@ -281,5 +291,6 @@ module.exports = {
     deleteProfile,
     activateAccount,
     ResetPasswordStudent,
-    ResetPassword
+    ResetPassword,
+    getUserInfo
 }
