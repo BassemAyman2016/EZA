@@ -8,4 +8,5 @@ const middleware = require('../middleware/login')
 // a simple test url to check that all of our files are communicating correctly.
 router.post('/registration', user.UserRegistration);
 router.put('/updateProfile/:user_id', middleware.verifyToken, user.UpdateUser)
+router.get('/getUserInfo/:user_id', middleware.verifyToken, user.getUserInfo)
 module.exports = router;
