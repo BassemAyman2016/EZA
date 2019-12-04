@@ -103,8 +103,9 @@ export default {
     },
     groupClicked(group) {
       this.$store.commit("setCurrentGroup", group);
+      this.$store.commit("clearGroupPosts");
       this.$store.dispatch("fetchGroupPosts", group._id);
-      this.$router.push("/posts");
+      if (this.$route.fullPath != "/posts") this.$router.push("/posts");
     }
   },
   created() {

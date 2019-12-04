@@ -12,14 +12,16 @@
           </q-card-actions>
         </q-card>
       </div>
-      <div class="col-3 q-gutter-md" v-for="(group, index) in MyGroups" :key="index">
-        <q-card class="my-card">
+      <div class="col-3 q-gutter-md" v-for="(group, index) in MyPosts" :key="index">
+        <q-card class="my-card" :class="{'bg-yellow-8':group.user_id.User_Category=='Doctor'}">
           <q-card-section>
-            <div class="text-subtitle5">{{group.group_id.Name}}</div>
+            <div
+              class="text-subtitle5"
+            >{{group.group_id.Name}} {{group.user_id.User_Category=='Doctor'?'Dr':''}}</div>
             <div
               class="text-subtitle1"
               v-if="UserID!==group.user_id._id"
-            >{{group.user_id.First_Name?group.user_id.First_Name:group.user_id.Email}}</div>
+            >{{group.user_id.First_Name?group.user_id.First_Name+" "+group.user_id.Last_Name:group.user_id.Email}}</div>
             <div class="text-subtitle1" v-else>You</div>
             <div class="text-h6">{{ group.Message }}</div>
             <!-- <div class="text-subtitle2">by John Doe</div> -->
@@ -44,7 +46,8 @@
               color="red-10"
               icon="far fa-trash-alt"
               title="delete"
-              v-if="UserID == group.user_id._id"
+              v-if="UserID == group.user_id._id||Role=='Doctor'"
+              @click="deletePost(group)"
             />
           </q-card-actions>
         </q-card>
@@ -61,12 +64,12 @@ export default {
     return {
       confirm: false,
       selectedGroup: { Name: "First" },
-      myGroups: [],
       postText: null
     };
   },
   created() {
-    this.$store.dispatch("fetchMyGroups");
+    var group_id = this.$store.getters.getCurrentGroup._id;
+    this.$store.dispatch("fetchGroupPosts", group_id);
   },
   methods: {
     SelectGroup(group) {
@@ -103,7 +106,6 @@ export default {
     },
     async submitPost() {
       var user_id = this.$store.getters.getUserData.id;
-      console.log(this.$store.getters.getCurrentGroup);
       var group_id = this.$store.getters.getCurrentGroup._id;
       await api()
         .post(`/posts/createPost/${user_id}/${group_id}`, {
@@ -129,10 +131,38 @@ export default {
             timeout: 1000
           });
         });
+    },
+    async deletePost(selectedPost) {
+      var user_id = this.$store.getters.getUserData.id;
+      var post_id = selectedPost._id;
+      var group_id = this.$store.getters.getCurrentGroup._id;
+      api()
+        .put(`/posts/deletePost/${user_id}/${post_id}`)
+        .then(res => {
+          if (res.data.status == "success") {
+            this.$q.notify({
+              color: "teal",
+              message: "Post Deleted Successfully",
+              position: "top-right",
+              timeout: 1000
+            });
+            this.$store.commit("clearGroupPosts");
+            this.$store.dispatch("fetchGroupPosts", group_id);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.$q.notify({
+            color: "red-10",
+            message: "Error",
+            position: "top-right",
+            timeout: 1000
+          });
+        });
     }
   },
   computed: {
-    MyGroups() {
+    MyPosts() {
       return this.$store.getters.getGroupPosts;
     },
     Role() {
