@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
-// const passport = require('passport')
+    // const passport = require('passport')
 const Post = require('../models/Post');
 const Group = require('../models/Group');
 const GroupUser = require('../models/GroupUser');
@@ -15,7 +15,7 @@ require('dotenv').config();
 
 
 
-CreateReply = async function (req, res) {
+CreateReply = async function(req, res) {
     try {
         const validation = req.body && req.body.Message != null
         if (!validation) {
@@ -67,8 +67,7 @@ CreateReply = async function (req, res) {
                         } else {
                             return res.status(404).send({ status: 'failure', message: 'error occured while creating the reply' })
                         }
-                    }
-                    catch (e) {
+                    } catch (e) {
                         console.log(e)
                         res.status(422).send({ status: 'failure', message: 'Reply Submission Failed' });
                     }
@@ -81,7 +80,7 @@ CreateReply = async function (req, res) {
     }
 }
 
-DeleteReply = async function (req, res) {
+DeleteReply = async function(req, res) {
     try {
         if (req.user_id !== req.params.user_id) {
             return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
@@ -111,7 +110,7 @@ DeleteReply = async function (req, res) {
     }
 }
 
-GetAllRepliesToPost = async function (req, res) {
+GetAllRepliesToPost = async function(req, res) {
     try {
         if (req.user_id !== req.params.user_id) {
             return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
@@ -134,7 +133,7 @@ GetAllRepliesToPost = async function (req, res) {
         if (user.Deleted === true) {
             return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
         } else {
-            const allReplies = await Reply.find({ post_id: req.params.post_id, Deleted: false })
+            const allReplies = await Reply.find({ post_id: req.params.post_id, Deleted: false }).populate({ path: 'user_id' }).populate({ path: 'group_id' }).populate({ path: 'post_id' })
             res.status(200).send({ status: 'success', msg: 'Replies Fetched successfully', data: allReplies });
         }
     } catch (error) {

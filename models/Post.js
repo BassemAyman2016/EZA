@@ -1,14 +1,17 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema
+var ObjectId = mongoose.Schema.Types.ObjectId;
 const UserSchema = new Schema({
     //All Users 
     user_id: {
-        type: String,
-        required: true
+        type: ObjectId,
+        required: true,
+        ref: 'users'
     },
     group_id: {
-        type: String,
-        required: true
+        type: ObjectId,
+        required: true,
+        ref: 'groups'
     },
     Message: {
         type: String,
