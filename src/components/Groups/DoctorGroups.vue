@@ -9,6 +9,7 @@
           </q-card-section>
           <q-card-actions>
             <q-btn flat @click="SelectGroup(group)">Delete Group</q-btn>
+            <q-btn flat>Invite User</q-btn>
           </q-card-actions>
         </q-card>
       </div>
