@@ -80,7 +80,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import api from "../../store/api";
 export default {
   name: "Login",
   data() {
@@ -105,9 +105,9 @@ export default {
 
     submitForm() {
       if (this.Password === this.ConfirmedPassword) {
-        axios
+        api()
           .post(
-            "http://localhost:3000/api/users/registration",
+            "/users/registration",
             this.studentFlag
               ? {
                   Email: this.Email,

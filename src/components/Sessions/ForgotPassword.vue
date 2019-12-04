@@ -29,8 +29,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-// import axios from "axios";
+import api from "../../store/api";
 export default {
   name: "Login",
   data() {
@@ -56,8 +55,8 @@ export default {
       });
     },
     submitForm() {
-      axios
-        .put("http://localhost:3000/api/sessions/requestResetPassword", {
+      api()
+        .put("/sessions/requestResetPassword", {
           Email: this.Email
         })
         .then(res => {

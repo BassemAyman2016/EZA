@@ -40,7 +40,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import api from "../../store/api";
 export default {
   name: "Login",
   props: {
@@ -58,8 +58,8 @@ export default {
     submitForm() {
       if (this.Password === this.ConfirmedPassword) {
         const token = this.resetToken;
-        axios
-          .put(`http://localhost:3000/api/sessions/resetPassword/${token}`, {
+        api()
+          .put(`/sessions/resetPassword/${token}`, {
             Password: this.Password,
             confirmPassword: this.ConfirmedPassword
           })

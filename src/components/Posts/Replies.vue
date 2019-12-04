@@ -1,60 +1,58 @@
 <template>
   <div>
-    <div class="row justify-center q-gutter-md">
-      <div class="col-3 q-gutter-md">
-        <q-card class="my-card">
-          <q-card-section>
-            <q-input rounded outlined v-model="postText" label="Write Post" />
-            <!-- <div class="text-subtitle2">by John Doe</div> -->
-          </q-card-section>
-          <q-card-actions class="row justify-center">
-            <q-btn color="primary" label="Submit" @click="submitPost" />
-          </q-card-actions>
-        </q-card>
-      </div>
-      <div class="col-3 q-gutter-md" v-for="(group, index) in MyPosts" :key="index">
-        <q-card class="my-card" :class="{'bg-yellow-8':group.user_id.User_Category=='Doctor'}">
+    <div class="fit column wrap justify-start items-start content-start q-gutter-md">
+      <div class="row q-gutter-md">
+        <q-card class="my-card bg-green-3" >
           <q-card-section>
             <div
               class="text-subtitle5"
-            >{{group.group_id.Name}} {{group.user_id.User_Category=='Doctor'?'Dr':''}}</div>
+            >{{currentPost.group_id.Name}} {{currentPost.user_id.User_Category=='Doctor'?'Dr':''}}</div>
             <div
               class="text-subtitle1"
-              v-if="UserID!==group.user_id._id"
-            >{{group.user_id.First_Name?group.user_id.First_Name+" "+group.user_id.Last_Name:group.user_id.Email}}</div>
+              v-if="UserID!==currentPost.user_id._id"
+            >{{currentPost.user_id.First_Name?currentPost.user_id.First_Name+" "+currentPost.user_id.Last_Name:currentPost.user_id.Email}}</div>
             <div class="text-subtitle1" v-else>You</div>
-            <div class="text-h6">{{ group.Message }}</div>
+            <div class="text-h4 ">{{ currentPost.Message }}</div>
+            <!-- <div class="text-subtitle2">by John Doe</div> -->
+          </q-card-section>
+          
+        </q-card>
+      </div>
+      <div class="row q-gutter-md" v-for="(reply, index) in Replies" :key="index">
+        <q-card class="my-card" :class="{'bg-yellow-8':reply.user_id.User_Category=='Doctor'}">
+          <q-card-section>
+            <!-- <div
+              class="text-subtitle5"
+            >{{group.group_id.Name}} {{group.user_id.User_Category=='Doctor'?'Dr':''}}</div> -->
+            <div
+              class="text-subtitle1"
+              v-if="UserID!==reply.user_id._id"
+            >{{reply.user_id.First_Name?reply.user_id.First_Name+" "+reply.user_id.Last_Name:reply.user_id.Email}} replied:</div>
+            <div class="text-subtitle9" v-else>You replied:</div>
+            <div class="text-h6 ">{{ reply.Message }}</div>
             <!-- <div class="text-subtitle2">by John Doe</div> -->
           </q-card-section>
           <q-card-actions class="row justify-center">
-            <!-- <q-btn
-              round
-              color="primary"
-              icon="fas fa-thumbs-up"
-              @click="SelectGroup(group)"
-              title="like"
-            />
-            <q-btn
-              round
-              color="red-8"
-              icon="fas fa-thumbs-down"
-              title="dislike"
-            />-->
-            <q-btn
-              round
-              color="green"
-              icon="fas fa-comment-dots"
-              title="comment"
-              @click="postClicked(group)"
-            />
+            
+           
             <q-btn
               round
               color="red-10"
               icon="far fa-trash-alt"
               title="delete"
-              v-if="UserID == group.user_id._id||Role=='Doctor'"
-              @click="deletePost(group)"
+              v-if="UserID == reply.user_id._id||Role=='Doctor'"
+              @click="deleteReply(reply)"
             />
+          </q-card-actions>
+        </q-card>
+      </div>
+      <div class="col-3 q-gutter-md" style="margin-bottom:20px;">
+        <q-card class="my-card">
+          <q-card-section>
+            <q-input rounded outlined v-model="replyText" label="Write Reply" />
+          </q-card-section>
+          <q-card-actions class="row justify-center">
+            <q-btn color="primary" label="Submit" @click="submitReply" />
           </q-card-actions>
         </q-card>
       </div>
@@ -65,12 +63,12 @@
 <script>
 import api from "../../store/api";
 export default {
-  name: "Groups",
+  name: "Replies",
   data() {
     return {
       confirm: false,
       selectedGroup: { Name: "First" },
-      postText: null
+      replyText: null
     };
   },
   created() {
@@ -110,23 +108,22 @@ export default {
           });
         });
     },
-    async submitPost() {
-      var user_id = this.$store.getters.getUserData.id;
-      var group_id = this.$store.getters.getCurrentGroup._id;
+    async submitReply() {
+      var post_id = this.$store.getters.getCurrentPost._id;
       await api()
-        .post(`/posts/createPost/${user_id}/${group_id}`, {
-          Message: this.postText
+        .post(`/replies/createReply/${post_id}`, {
+          Message: this.replyText
         })
         .then(res => {
           if (res.data.status == "success") {
             this.$q.notify({
               color: "teal",
-              message: "Post Created Successfully",
+              message: "Reply Created Successfully",
               position: "top-right",
               timeout: 1000
             });
-            this.postText = null;
-            this.$store.dispatch("fetchGroupPosts", group_id);
+            this.replyText = null;
+            this.$store.dispatch("fetchPostReplies");
           }
         })
         .catch(() => {
@@ -138,22 +135,20 @@ export default {
           });
         });
     },
-    async deletePost(selectedPost) {
+    async deleteReply(selectedReply) {
       var user_id = this.$store.getters.getUserData.id;
-      var post_id = selectedPost._id;
-      var group_id = this.$store.getters.getCurrentGroup._id;
+      var reply_id = selectedReply._id;
       api()
-        .put(`/posts/deletePost/${user_id}/${post_id}`)
+        .put(`/replies/deleteReply/${user_id}/${reply_id}`)
         .then(res => {
           if (res.data.status == "success") {
             this.$q.notify({
               color: "teal",
-              message: "Post Deleted Successfully",
+              message: "Reply Deleted Successfully",
               position: "top-right",
               timeout: 1000
             });
-            this.$store.commit("clearGroupPosts");
-            this.$store.dispatch("fetchGroupPosts", group_id);
+            this.$store.dispatch("fetchPostReplies");
           }
         })
         .catch(err => {
@@ -167,21 +162,24 @@ export default {
         });
     },
     postClicked(post) {
-      this.$store.commit('clearCurrentPost');
+        console.log(post)
       this.$store.commit("setCurrentPost", post);
       this.$router.push("/replies");
       this.$store.dispatch("fetchPostReplies");
     }
   },
   computed: {
-    MyPosts() {
-      return this.$store.getters.getGroupPosts;
+    Replies() {
+      return this.$store.getters.getPostReplies;
     },
     Role() {
       return sessionStorage.getItem("role");
     },
     UserID() {
       return this.$store.getters.getUserData.id;
+    },
+    currentPost(){
+        return this.$store.getters.getCurrentPost
     }
   }
 };
