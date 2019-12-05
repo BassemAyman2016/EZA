@@ -2,7 +2,7 @@ import axios from "axios";
 
 export default () => {
     return axios.create({
-        baseURL: "http://localhost:3000/api",
+        baseURL: "https://ezaplus.herokuapp.com/api",
         headers: {
             Authorization: sessionStorage.getItem("token")
         }
