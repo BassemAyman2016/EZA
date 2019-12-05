@@ -244,11 +244,6 @@ GetAllGroupByCreator = async function (req, res) {
         res.status(422).send({ status: 'failure', message: ' Showing Group Created By Me Failed' });
     }
 };
-function sleep(ms) {
-    return new Promise(resolve => {
-        setTimeout(resolve, ms)
-    })
-}
 GetAllGroupByUser = async function (req, res) {
     try {
 
@@ -309,10 +304,9 @@ GetAllUsersInGroup = async function (req, res) {
 
 DoctorKickUser = async function (req, res) {
     try {
-        const validation = req.body && req.body.group_id != null && req.body.kick_id != null;
+        const validation = req.params && req.params.group_id != null && req.params.kick_id != null;
         if (!validation) {
             return res.status(400).send({ status: 'failure', message: 'Params Missing' });
-
         } else {
             if (req.user_id !== req.params.user_id) {
                 return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
@@ -329,11 +323,11 @@ DoctorKickUser = async function (req, res) {
                 return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
             }
 
-            const { group_id, kick_id } = req.body;
+            const { group_id, kick_id } = req.params;
             const group = await Group.findOne({ '_id': group_id });
             if (group.Created_By === req.user_id) {
                 await GroupUser.deleteOne({ group_id: group_id, user_id: kick_id });
-                res.status(200).send({ status: 'success', msg: 'User Deleted successfully' });
+                return res.status(200).send({ status: 'success', msg: 'User Deleted successfully' });
             } else {
                 return res.status(404).send({ status: 'failure', message: 'This group is not created by you' })
             }
@@ -368,7 +362,7 @@ getRequests = async function (req, res) {
         }
     } catch (e) {
         console.log(e)
-        res.status(422).send({ status: 'failure', message: 'Deletion of Group Failed' });
+        return res.status(422).send({ status: 'failure', message: 'Deletion of Group Failed' });
     }
 };
 DoctorInviteUser = async function (req, res) {
@@ -410,7 +404,7 @@ DoctorInviteUser = async function (req, res) {
         }
     } catch (e) {
         console.log(e)
-        res.status(422).send({ status: 'failure', message: 'Invitation for Group Failed' });
+        return res.status(422).send({ status: 'failure', message: 'Invitation for Group Failed' });
     }
 };
 cancelRequest = async function (req, res) {
@@ -445,7 +439,7 @@ cancelRequest = async function (req, res) {
         }
     } catch (e) {
         console.log(e)
-        res.status(422).send({ status: 'failure', message: 'Deletion of Request Failed' });
+        return res.status(422).send({ status: 'failure', message: 'Deletion of Request Failed' });
     }
 };
 
