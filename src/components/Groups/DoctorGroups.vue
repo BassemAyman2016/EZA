@@ -176,13 +176,9 @@ export default {
       secondDialog: false,
       selectedKickedUser: { Fitst_Name: "", Last_Name: "" },
       joinRequestsFlag: false,
-<<<<<<< HEAD
-      joinRequests: []
-=======
       joinRequests: [],
       resourceDialogFlag: false,
       filePDF: null
->>>>>>> 11282932375c68deff1b973ee7a601a9c4e7a507
     };
   },
   created() {
@@ -291,16 +287,8 @@ export default {
       var user_id = this.$store.getters.getUserData.id;
       var group_id = this.selectedGroup._id;
       var kick_id = this.selectedKickedUser._id;
-      var apiObject = {
-        group_id: group_id,
-        kick_id: kick_id
-      };
-<<<<<<< HEAD
-      console.log(apiObject);
-=======
->>>>>>> 11282932375c68deff1b973ee7a601a9c4e7a507
       api()
-        .delete(`/groups/doctorKickUser/${user_id}`, apiObject)
+        .delete(`/groups/${group_id}/doctorKickUser/${user_id}/${kick_id}`)
         .then(res => {
           if (res.data.status == "success") {
             this.$q.notify({
@@ -314,13 +302,8 @@ export default {
           }
         })
         .catch(err => {
-          console.log(apiObject);
-<<<<<<< HEAD
-          console.log(err);
-=======
           console.log(err.response.data.message);
           console.log(err.message);
->>>>>>> 11282932375c68deff1b973ee7a601a9c4e7a507
           this.$q.notify({
             color: "red-10",
             message: "Error Occured , Try Again",
