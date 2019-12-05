@@ -31,12 +31,16 @@ CreateReply = async function(req, res) {
                 return res.status(404).send({ status: 'failure', message: 'Post Not Found' })
             }
             const groupId = post.group_id
-            const groupUser = GroupUser.findOne({ group_id: groupId, user_id: user_id })
-            if (!groupUser) {
-                const group = await Group.findOne({ '_id': req.params.post_id })
-                if (group.Created_By !== req.user_id)
-                    return res.status(400).send({ status: 'failure', message: 'you are not part of this group' })
-            }
+            const groupUser = GroupUser.findOne({ group_id: groupId.toString(), user_id: user_id.toString() })
+                // console.log(groupUser ? 'true' : 'false')
+                // if (typeof groupUser.group_id == 'undefined') {
+                //     const group = await Group.findOne({ '_id': groupId })
+                //     if (group.Created_By !== req.user_id) {
+                //         return res.status(400).send({ status: 'failure', message: 'you are not part of this group' })
+                //     }
+
+
+            // }
             if (user.Deleted === true) { // Deactivated send message to activate
                 return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
             } else {
@@ -46,14 +50,15 @@ CreateReply = async function(req, res) {
                     return res.status(400).send({ status: 'failure', message: 'you already posted this reply' });
                 } else {
                     const getUserEmail = await User.findOne({ '_id': post.user_id })
+                    console.log(getUserEmail.Email)
                     if (!getUserEmail) {
                         return res.status(404).send({ status: 'failure', message: 'The User Posted this post may have removed it' });
                     }
                     try {
-                        const html = fs.readFileSync(path.resolve(__dirname, 'digestTemplate.html'), 'utf8').toString()
-                            .replace(/\$\{token\}/g, `http://localhost:8080/posts/${post._id}`)
-                            .replace(/\$\{token2\}/g, `User with this Information: Email: ${user.Email}, Name:${user.First_Name + ' ' + user.Last_Name} Replied On Your Post`)
-                        const sendMail = await EmailAdapter.send('eza+@eza.com', getUserEmail.Email, 'Activty', 'Digest', html)
+                        // const html = fs.readFileSync(path.resolve(__dirname, 'digestTemplate.html'), 'utf8').toString()
+                        //     .replace(/\$\{token\}/g, `http://localhost:8080/posts/${post._id}`)
+                        //     .replace(/\$\{token2\}/g, `User with this Information: Email: ${user.Email}, Name:${user.First_Name + ' ' + user.Last_Name} Replied On Your Post`)
+                        // const sendMail = await EmailAdapter.send('eza+@eza.com', getUserEmail.Email, 'Activty', 'Digest', html)
                         const replyObject = {
                             Message: Message,
                             user_id: user_id,
@@ -93,7 +98,7 @@ DeleteReply = async function(req, res) {
         if (!reply) {
             return res.status(404).send({ status: 'failure', message: 'Reply Not Found' })
         }
-        if (reply.user_id === req.params.user_id) {
+        if (reply.user_id.toString() === req.params.user_id) {
             if (user.Deleted === true) {
                 return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
             } else {
@@ -102,7 +107,13 @@ DeleteReply = async function(req, res) {
                 res.status(200).send({ status: 'success', msg: 'Post Deleted successfully', data: deletedReply });
             }
         } else {
-            return res.status(404).send({ status: 'failure', message: 'you cannot delete this reply' })
+            const group = Group.findOne({ _id: reply.group_id.toString(), Created_By: req.params.user_id })
+            if (group) {
+                await Reply.findOneAndUpdate({ _id: req.params.reply_id }, { Deleted: true })
+                const deletedReply = await Reply.find({ user_id: req.params.user_id, _id: req.params.reply_id })
+                res.status(200).send({ status: 'success', msg: 'Post Deleted successfully', data: deletedReply });
+            } else
+                return res.status(404).send({ status: 'failure', message: 'you cannot delete this reply' })
         }
     } catch (error) {
         console.log(error)
