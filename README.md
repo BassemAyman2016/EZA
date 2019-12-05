@@ -1,3 +1,34 @@
+<<<<<<< HEAD
+# muse-ui
+
+## Project setup
+```
+npm install
+```
+
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Run your tests
+```
+npm run test
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
+=======
 # EZA+
 EZA+ web app
 
@@ -22,3 +53,4 @@ resource{id,user_id,group_id,data}
 
 notification{id,user_id,group_id,post_id}
 
+>>>>>>> a442372f835bc59b4e76acf4017dd07142326cbb
