@@ -225,8 +225,10 @@ export default {
     }
   },
   created() {
-    if (typeof this.$store.getters.getUserData.First_Name === "undefined")
+    if (typeof this.$store.getters.getUserData.First_Name === "undefined"){
+      this.Email=this.$store.getters.getUserData.email
       this.fetchUserInfo();
+    }
     else this.setUserData();
   }
 };
