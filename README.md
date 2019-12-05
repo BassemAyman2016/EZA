@@ -1,5 +1,7 @@
 # EZA+
 EZA+ web app
+# App Deployed On Heroku Follow The Link Below:
+https://eza-plus.herokuapp.com
 # APIs And Backing Service USED:
 1- MongoDB
 2- NodeMailerJs
