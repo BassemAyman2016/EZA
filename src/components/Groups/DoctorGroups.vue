@@ -98,10 +98,11 @@
     </div>
   </div>
 </template>
-  </div>
-</template>
+ 
 
 <script>
+/* eslint-disable */
+
 import api from "../../store/api";
 export default {
   name: "Groups",

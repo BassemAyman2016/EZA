@@ -63,6 +63,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import api from "../../store/api";
 export default {
   name: "Groups",
@@ -167,7 +168,7 @@ export default {
         });
     },
     postClicked(post) {
-      this.$store.commit('clearCurrentPost');
+      this.$store.commit("clearCurrentPost");
       this.$store.commit("setCurrentPost", post);
       this.$router.push("/replies");
       this.$store.dispatch("fetchPostReplies");
