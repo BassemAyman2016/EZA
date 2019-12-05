@@ -1,7 +1,11 @@
 # EZA+
 EZA+ web app
 
-Tables:
+# APIs and Backing Service Used:
+1) MongoDB
+2) Cloudinary
+3) NodeMailer
+# Tables:
 
 User { id,first_name,last_name,email,password,deleted}
 
