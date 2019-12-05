@@ -21,7 +21,7 @@ addResource = async function (req, res) {
                 return res.status(404).send({ status: 'failure', message: 'Group Not Found' })
             }
             const groupUser = await GroupUser.findOne({ 'group_id': req.params.group_id, 'user_id': req.user_id })
-            if (!groupUser) {
+            if (!groupUser || user.User_Category !== 'Doctor') {
                 return res.status(403).send({ status: 'failure', message: 'Access Forbidden' })
             }
             if (user.Deleted === true) { // Deactivated send message to activate
@@ -62,7 +62,7 @@ removeResource = async function (req, res) {
                 return res.status(404).send({ status: 'failure', message: 'User Not Found' })
             }
             const group = await Group.findOne({ '_id': req.params.group_id })
-            if (!group) {
+            if (!group || user.User_Category !== 'Doctor') {
                 return res.status(404).send({ status: 'failure', message: 'Group Not Found' })
             }
             const groupUser = await GroupUser.findOne({ 'group_id': req.params.group_id, 'user_id': req.user_id })

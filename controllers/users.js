@@ -33,7 +33,7 @@ Login = async function (req, res) {
                 }
                 req.user_id = user._id
                 req.role = user.User_Category
-                const token = jwt.sign(payload, tokenKey, { expiresIn: '3h' })
+                const token = jwt.sign(payload, tokenKey, { expiresIn: '6h' })
                 return res.status(200).send({ status: 'success', token: `bearer ${token}`, role: user.User_Category, id: user._id })
             }
         } else return res.status(400).send({ error: 'Wrong password' });
