@@ -83,6 +83,9 @@ export default new Vuex.Store({
         },
         setPostReplies(state, replies) {
             state.PostReplies = replies
+        },
+        clearPostReplies(state) {
+            state.PostReplies = []
         }
     },
     actions: {

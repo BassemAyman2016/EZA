@@ -54,12 +54,12 @@
         </q-item>
 
         <q-item-label header>My Groups</q-item-label>
-        <q-item clickable v-for="(group, index) in MyGroups" :key="index">
+        <q-item clickable v-for="(group, index) in MyGroups" :key="index" @click="groupClicked(group)">
           <q-item-section avatar>
             <q-icon name="fas fa-graduation-cap" />
           </q-item-section>
-          <q-item-section>
-            <q-item-label @click="groupClicked(group)">
+          <q-item-section >
+            <q-item-label >
               {{
               group.Name
               }}
@@ -102,8 +102,9 @@ export default {
       this.$router.push("/");
     },
     groupClicked(group) {
-      this.$store.commit("setCurrentGroup", group);
       this.$store.commit("clearGroupPosts");
+      this.$store.commit('clearPostReplies')
+      this.$store.commit("setCurrentGroup", group);
       this.$store.dispatch("fetchGroupPosts", group._id);
       if (this.$route.fullPath != "/posts") this.$router.push("/posts");
     }

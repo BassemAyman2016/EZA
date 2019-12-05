@@ -49,7 +49,7 @@
       <div class="col-3 q-gutter-md" style="margin-bottom:20px;">
         <q-card class="my-card">
           <q-card-section>
-            <q-input rounded outlined v-model="replyText" label="Write Reply" />
+            <q-input rounded outlined v-model="replyText" label="Write Reply" @keyup.enter="submitReply" />
           </q-card-section>
           <q-card-actions class="row justify-center">
             <q-btn color="primary" label="Submit" @click="submitReply" />
