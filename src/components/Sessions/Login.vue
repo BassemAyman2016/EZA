@@ -7,9 +7,7 @@
             <div class="col">
               <div class="row justify-center">
                 <div class="col-shrink">
-                  <q-card-section style="font-size:30px; padding:45px;"
-                    >Login</q-card-section
-                  >
+                  <q-card-section style="font-size:30px; padding:45px;">Login</q-card-section>
                 </div>
               </div>
               <div class="row justify-center field-margin">
@@ -30,9 +28,10 @@
               </div>
               <div class="row justify-center link-padding">
                 <div class="col-7">
-                  <div class="forgot-password" @click="$router.push('/forgot')">
-                    Forgot Password ? Click here to reset
-                  </div>
+                  <div
+                    class="forgot-password"
+                    @click="$router.push('/forgot')"
+                  >Forgot Password ? Click here to reset</div>
                 </div>
               </div>
               <div class="row justify-center field-margin-1">
@@ -40,19 +39,12 @@
                   <div
                     class="forgot-password"
                     @click="$router.push('/registration')"
-                  >
-                    Not a Member ? Click here to register
-                  </div>
+                  >Not a Member ? Click here to register</div>
                 </div>
               </div>
               <div class="row justify-center" style="margin-bottom:20px">
                 <div class="col-7">
-                  <q-btn
-                    color="primary"
-                    label="Submit"
-                    class="full-width"
-                    @click="submitForm"
-                  />
+                  <q-btn color="primary" label="Submit" class="full-width" @click="submitForm" />
                 </div>
               </div>
             </div>
@@ -63,7 +55,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import api from "../../store/api";
 export default {
   name: "Login",
   data() {
@@ -74,8 +66,8 @@ export default {
   },
   methods: {
     submitForm() {
-      axios
-        .post("http://localhost:3000/api/sessions/login", {
+      api()
+        .post("/sessions/login", {
           Email: this.Email,
           Password: this.Password
         })

@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import axios from "axios";
+import api from "./api";
 import VuexPersistence from "vuex-persist";
 Vue.use(Vuex);
 const vuexLocal = new VuexPersistence({
@@ -14,7 +14,9 @@ export default new Vuex.Store({
         MyGroups: [],
         StudentGroups: [],
         GroupPosts: [],
-        CurrentGroup: null
+        CurrentGroup: null,
+        CurrentPost: null,
+        PostReplies: []
     },
     getters: {
         getUserData(state) {
@@ -34,6 +36,12 @@ export default new Vuex.Store({
         },
         getCurrentGroup(state) {
             return state.CurrentGroup;
+        },
+        getCurrentPost(state) {
+            return state.CurrentPost
+        },
+        getPostReplies(state) {
+            return state.PostReplies
         }
     },
     mutations: {
@@ -66,12 +74,21 @@ export default new Vuex.Store({
         },
         clearGroupPosts(state) {
             state.GroupPosts = []
+        },
+        setCurrentPost(state, post) {
+            state.CurrentPost = post
+        },
+        clearCurrentPost(state) {
+            state.CurrentPost = null
+        },
+        setPostReplies(state, replies) {
+            state.PostReplies = replies
         }
     },
     actions: {
         async fetchAllGroups(context) {
-            await axios
-                .get("http://localhost:3000/api/groups/getAllGroups")
+            await api()
+                .get("/groups/getAllGroups")
                 .then(res => {
                     if (res.data.status == "sucess")
                         context.commit("setAllGroups", res.data.data);
@@ -80,14 +97,9 @@ export default new Vuex.Store({
         },
         async fetchMyGroups(context) {
             var user_id = context.getters.getUserData.id;
-            await axios
+            await api()
                 .get(
-                    `http://localhost:3000/api/groups/getAllGroupByCreator/${user_id}`, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: sessionStorage.getItem("token")
-                        }
-                    }
+                    `/groups/getAllGroupByCreator/${user_id}`
                 )
                 .then(res => {
                     if (res.data.status == "success") {
@@ -97,13 +109,8 @@ export default new Vuex.Store({
         },
         async fetchStudentGroups(context) {
             var user_id = context.getters.getUserData.id;
-            await axios
-                .get(`http://localhost:3000/api/groups/getAllGroupByUser/${user_id}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: sessionStorage.getItem("token")
-                    }
-                })
+            await api()
+                .get(`/groups/getAllGroupByUser/${user_id}`)
                 .then(res => {
                     if (res.data.status == "success") {
                         context.commit("setStudentGroups", res.data.data);
@@ -112,18 +119,26 @@ export default new Vuex.Store({
         },
         async fetchGroupPosts(context, group_id) {
             var user_id = context.getters.getUserData.id;
-            await axios
+            await api()
                 .get(
-                    `http://localhost:3000/api/posts/getGroupPosts/${user_id}/${group_id}`, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: sessionStorage.getItem("token")
-                        }
-                    }
+                    `/posts/getGroupPosts/${user_id}/${group_id}`
                 )
                 .then(res => {
                     if (res.data.status == "success") {
                         context.commit("setGroupPosts", res.data.data);
+                    }
+                });
+        },
+        async fetchPostReplies(context) {
+            var user_id = context.getters.getUserData.id;
+            var post_id = context.getters.getCurrentPost._id;
+            await api()
+                .get(
+                    `/replies/getAllReplies/${user_id}/${post_id}`
+                )
+                .then(res => {
+                    if (res.data.status == "success") {
+                        context.commit("setPostReplies", res.data.data);
                     }
                 });
         }
