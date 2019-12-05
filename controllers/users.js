@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
-    // const passport = require('passport')
+// const passport = require('passport')
 const User = require('../models/User');
 const tokenKey = require('../config').secretOrKey
 const EmailAdapter = require('../helpers/mailAdapter')
@@ -9,7 +9,7 @@ const path = require('path')
 const crypto = require('crypto')
 
 require('dotenv').config();
-Login = async function(req, res) {
+Login = async function (req, res) {
     try {
         const validation = req.body && req.body.Email != null && req.body.Password != null
         if (!validation) {
@@ -28,7 +28,8 @@ Login = async function(req, res) {
             } else {
                 const payload = {
                     id: user._id,
-                    User_Category: user.User_Category
+                    User_Category: user.User_Category,
+
                 }
                 req.user_id = user._id
                 req.role = user.User_Category
@@ -42,7 +43,7 @@ Login = async function(req, res) {
     }
 };
 
-UserRegistration = async function(req, res) {
+UserRegistration = async function (req, res) {
     try {
         const validation = req.body && req.body.Password != null && req.body.Email != null && req.body.User_Category != null
         if (!validation) {
@@ -99,7 +100,7 @@ UserRegistration = async function(req, res) {
         res.status(422).send({ status: 'failure', message: 'User Creation Failed' });
     }
 };
-UpdateUser = async function(req, res) {
+UpdateUser = async function (req, res) {
     try {
         const validation = req.body
         if (!validation) {
@@ -146,7 +147,7 @@ UpdateUser = async function(req, res) {
     }
 };
 
-deleteProfile = async function(req, res) {
+deleteProfile = async function (req, res) {
     try {
         const validation = req.body
         if (!validation) {
@@ -172,7 +173,7 @@ deleteProfile = async function(req, res) {
         res.status(422).send({ status: 'failure', message: 'Update Profile Failed' });
     }
 };
-activateAccount = async function(req, res) {
+activateAccount = async function (req, res) {
     try {
         const validation = req.body
         if (!validation) {
@@ -198,7 +199,7 @@ activateAccount = async function(req, res) {
         res.status(422).send({ status: 'failure', message: 'Update Profile Failed' });
     }
 };
-ResetPassword = async function(req, res) {
+ResetPassword = async function (req, res) {
     try {
         const validation = req.body && req.body.Email != null
         if (!validation) {
@@ -228,7 +229,7 @@ ResetPassword = async function(req, res) {
         res.status(422).send({ status: 'failure', message: 'Changing Password Failed' });
     }
 };
-ResetPasswordStudent = async function(req, res) {
+ResetPasswordStudent = async function (req, res) {
     try {
         const validation = req.body && req.params.token != null
         if (!validation) {
@@ -261,7 +262,7 @@ ResetPasswordStudent = async function(req, res) {
         res.status(422).send({ status: 'failure', message: 'Changing Password Failed' });
     }
 };
-getUserInfo = async function(req, res) {
+getUserInfo = async function (req, res) {
     try {
 
         if (req.user_id !== req.params.user_id) {
