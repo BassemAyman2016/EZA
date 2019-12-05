@@ -25,6 +25,5 @@ resource{id,user_id,group_id,data}
 
 notification{id,user_id,group_id,post_id}
 
-=======
 ## Run Through Terminal By:
 ### - npm run dev
