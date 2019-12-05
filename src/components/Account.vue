@@ -96,6 +96,8 @@
   </div>
 </template>
 <script>
+/* eslint-disable */
+
 import api from "../store/api";
 export default {
   name: "Account",
@@ -225,11 +227,10 @@ export default {
     }
   },
   created() {
-    if (typeof this.$store.getters.getUserData.First_Name === "undefined"){
-      this.Email=this.$store.getters.getUserData.email
+    if (typeof this.$store.getters.getUserData.First_Name === "undefined") {
+      this.Email = this.$store.getters.getUserData.email;
       this.fetchUserInfo();
-    }
-    else this.setUserData();
+    } else this.setUserData();
   }
 };
 </script>
