@@ -12,6 +12,10 @@ const ResourceSchema = new Schema({
     data: {
         type: String,
         required: true
+    },
+    name: {
+        type: String,
+        required: true
     }
 })
 module.exports = Resources = mongoose.model('resources', ResourceSchema)
