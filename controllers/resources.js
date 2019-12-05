@@ -8,7 +8,7 @@ require('dotenv').config();
 
 addResource = async function (req, res) {
     try {
-        const validation = req.body && req.body.data != null
+        const validation = req.body && req.body.data != null && req.body.name != null
         if (!validation) {
             return res.status(400).send({ status: 'failure', message: 'Params are missing' })
         } else {
@@ -32,7 +32,8 @@ addResource = async function (req, res) {
             const resourceObject = {
                 data: data,
                 user_id: req.user_id,
-                group_id: req.params.group_id
+                group_id: req.params.group_id,
+                name: req.body.name
             }
             const createResource = await Resource.create(resourceObject)
             const resourceCreated = await Resource.findOne({ '_id': createResource._id });
@@ -86,9 +87,60 @@ removeResource = async function (req, res) {
         res.status(422).send({ status: 'failure', message: 'Resource Deletion Failed' });
     }
 };
-
-
+getAllResourcesForGroup = async function (req, res) {
+    try {
+        const validation = req.params && req.params.group_id != null
+        if (!validation) {
+            return res.status(400).send({ status: 'failure', message: 'Params are missing' })
+        } else {
+            const user = await User.findOne({ '_id': req.user_id })
+            if (!user) {
+                return res.status(404).send({ status: 'failure', message: 'User Not Found' })
+            }
+            const group_id = req.params.group_id
+            const groupUser = await GroupUser.findOne({ 'user_id': req.user_id })
+            if (!groupUser && (user.User_Category !== 'Doctor' || user.User_Category !== 'Admin')) {
+                return res.status(403).send({ status: 'failure', message: 'Access Forbidden Cannot See Resources for outcomers' })
+            } else {
+                const getAllResourcesForGroup = await Resource.find({ 'group_id': group_id })
+                return res.status(200).send({ status: 'success', resource: getAllResourcesForGroup })
+            }
+        }
+    }
+    catch (e) {
+        console.log(e)
+        res.status(422).send({ status: 'failure', message: 'Resource Return Failed' });
+    }
+}
+getResourceByID = async function (req, res) {
+    try {
+        const validation = req.params && req.params.group_id != null && req.params.resource_id != null
+        if (!validation) {
+            return res.status(400).send({ status: 'failure', message: 'Params are missing' })
+        } else {
+            const user = await User.findOne({ '_id': req.user_id })
+            if (!user) {
+                return res.status(404).send({ status: 'failure', message: 'User Not Found' })
+            }
+            const group_id = req.params.group_id
+            const resource_id = req.params.resource_id
+            const groupUser = await GroupUser.findOne({ 'user_id': req.user_id })
+            if (!groupUser && (user.User_Category !== 'Doctor' || user.User_Category !== 'Admin')) {
+                return res.status(403).send({ status: 'failure', message: 'Access Forbidden Cannot See Resources for outcomers' })
+            } else {
+                const getAllResourcesForGroup = await Resource.findById({ '_id': resource_id })
+                return res.status(200).send({ status: 'success', resource: getAllResourcesForGroup })
+            }
+        }
+    }
+    catch (e) {
+        console.log(e)
+        res.status(422).send({ status: 'failure', message: 'Resource Return Failed' });
+    }
+}
 module.exports = {
     addResource,
-    removeResource
+    removeResource,
+    getAllResourcesForGroup,
+    getResourceByID
 }
