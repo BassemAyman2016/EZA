@@ -15,7 +15,7 @@ router.post('/acceptJoinRequest/:user_id', middleware.verifyToken, group.AcceptJ
 router.get('/getAllGroupByCreator/:user_id', middleware.verifyToken, group.GetAllGroupByCreator);
 router.get('/getAllGroupByUser/:user_id', middleware.verifyToken, group.GetAllGroupByUser);
 router.get('/getAllUsersInGroup/:user_id/:group_id', middleware.verifyToken, group.GetAllUsersInGroup);
-router.delete('/doctorKickUser/:user_id', middleware.verifyToken, group.DoctorKickUser);
+router.delete('/:group_id/doctorKickUser/:user_id/:kick_id', middleware.verifyToken, group.DoctorKickUser);
 router.post('/doctorInviteUser/:user_id/:group_id', middleware.verifyToken, group.DoctorInviteUser);
 router.delete('/:group_id/requests/:user_id', middleware.verifyToken, group.cancelRequest);
 
