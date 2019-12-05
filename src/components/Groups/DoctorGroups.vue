@@ -8,7 +8,7 @@
             <!-- <div class="text-subtitle2">by John Doe</div> -->
           </q-card-section>
           <q-card-actions class="q-gutter-sm row justify-center">
-            <q-btn color="red-8"  @click="SelectGroup(group)">Delete Group</q-btn>
+            <q-btn color="red-8" @click="SelectGroup(group)">Delete Group</q-btn>
             <q-btn color="primary" @click="inviteUser(group)">Invite User</q-btn>
             <q-btn color="secondary" @click="viewUsers(group)">View Users</q-btn>
             <q-btn color="amber" @click="uploadResource(group)">Upload Resource</q-btn>
@@ -92,7 +92,7 @@
 
           <q-card-actions align="right" class="bg-white text-teal">
             <q-btn flat label="Yes" @click="kickUser" />
-            <q-btn flat label="No" v-close-popup />
+            <q-btn flat label="No" @click="secondDialog=false" />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -106,24 +106,24 @@
             <div
               class="column text-h5"
             >{{user.user_id.First_Name?user.user_id.First_Name+" "+user.user_id.Last_Name:user.user_id.Email}}</div>
-            <div class="row q-gutter-sm"><q-btn
-              round
-              color="secondary"
-              icon="fas fa-check"
-              title="accept"
-              v-close-popup
-              @click="acceptJoinRequest(user)"
-            />
-            <q-btn
-              round
-              color="red-10"
-              icon="fas fa-times"
-              title="reject"
-              v-close-popup
-              @click="rejectJoinRequest(user)"
-            /></div>
-            
-            
+            <div class="row q-gutter-sm">
+              <q-btn
+                round
+                color="secondary"
+                icon="fas fa-check"
+                title="accept"
+                v-close-popup
+                @click="acceptJoinRequest(user)"
+              />
+              <q-btn
+                round
+                color="red-10"
+                icon="fas fa-times"
+                title="reject"
+                v-close-popup
+                @click="rejectJoinRequest(user)"
+              />
+            </div>
           </q-card-section>
           <q-card-actions align="right" class="text-primary">
             <q-btn flat label="OK" color="primary" @click="joinRequestsFlag=false" />
@@ -151,8 +151,8 @@ export default {
       inception: false,
       secondDialog: false,
       selectedKickedUser: { Fitst_Name: "", Last_Name: "" },
-      joinRequestsFlag:false,
-      joinRequests:[]
+      joinRequestsFlag: false,
+      joinRequests: []
     };
   },
   created() {
@@ -265,9 +265,9 @@ export default {
         group_id: group_id,
         kick_id: kick_id
       };
-      console.log(apiObject)
+      console.log(apiObject);
       api()
-        .delete(`/groups/doctorKickUser/${user_id}`, apiObject)
+        .post(`/groups/doctorKickUser/${user_id}`, apiObject)
         .then(res => {
           if (res.data.status == "success") {
             this.$q.notify({
@@ -276,15 +276,14 @@ export default {
               position: "top-right",
               timeout: 1000
             });
-            this.selectedKickedUser = null;
-            this.groupUsers = [];
+
             this.secondDialog = false;
-            this.selectedGroup = null;
           }
         })
         .catch(err => {
-          console.log(apiObject)
-          console.log(err);
+          console.log(apiObject);
+          console.log(err.response.data.message);
+          console.log(err.message);
           this.$q.notify({
             color: "red-10",
             message: "Error Occured , Try Again",
@@ -293,7 +292,7 @@ export default {
           });
         });
     },
-    viewRequests(group){
+    viewRequests(group) {
       this.joinRequests = [];
       this.$q.loading.show();
       // hiding in 2s
@@ -319,40 +318,41 @@ export default {
         });
       this.joinRequestsFlag = true;
     },
-    acceptJoinRequest(user){
-      var user_id = this.$store.getters.getUserData.id 
-      var apiObject ={
-        group_id:user.group_id._id,
-        requesting_id:user.user_id._id
-      }
-      api().post(`/groups/acceptJoinRequest/${user_id}`,apiObject)
-      .then(res=>{
-        if(res.data.status=='success'){
-          this.$q.notify({
+    acceptJoinRequest(user) {
+      var user_id = this.$store.getters.getUserData.id;
+      var apiObject = {
+        group_id: user.group_id._id,
+        requesting_id: user.user_id._id
+      };
+      api()
+        .post(`/groups/acceptJoinRequest/${user_id}`, apiObject)
+        .then(res => {
+          if (res.data.status == "success") {
+            this.$q.notify({
               color: "teal",
               message: "Join Request Accepted Successfully",
               position: "top-right",
               timeout: 1000
             });
             this.viewRequests(user.group_id);
-        }
-      })
-      .catch(err=>{
-        console.log(err)
-        this.$q.notify({
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.$q.notify({
             color: "red-10",
             message: "Error Occured , Try Again",
             position: "top-right",
             timeout: 1000
           });
-      })
+        });
     },
-    rejectJoinRequest(user){
-      var user_id = this.$store.getters.getUserData.id 
-      var apiObject ={
-        group_id:user.group_id._id,
-        requesting_id:user.user_id._id
-      }
+    rejectJoinRequest(user) {
+      var user_id = this.$store.getters.getUserData.id;
+      var apiObject = {
+        group_id: user.group_id._id,
+        requesting_id: user.user_id._id
+      };
       // api().post(`/groups/acceptJoinRequest/${user_id}`,apiObject)
       // .then(res=>{
       //   if(res.data.status=='success'){
