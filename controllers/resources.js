@@ -21,7 +21,7 @@ addResource = async function (req, res) {
                 return res.status(404).send({ status: 'failure', message: 'Group Not Found' })
             }
             const groupUser = await GroupUser.findOne({ 'group_id': req.params.group_id, 'user_id': req.user_id })
-            if (!groupUser && user.User_Category !== 'Doctor') {
+            if (user.User_Category !== 'Doctor') {
                 return res.status(403).send({ status: 'failure', message: 'Access Forbidden' })
             }
             if (user.Deleted === true) { // Deactivated send message to activate
@@ -65,8 +65,7 @@ removeResource = async function (req, res) {
             if (!group && user.User_Category !== 'Doctor') {
                 return res.status(404).send({ status: 'failure', message: 'Group Not Found' })
             }
-            const groupUser = await GroupUser.findOne({ 'group_id': req.params.group_id, 'user_id': req.user_id })
-            if (!groupUser) {
+            if ((user.User_Category !== 'Doctor')) {
                 return res.status(403).send({ status: 'failure', message: 'Access Forbidden Cannot delete this post as you are not the creator' })
             }
             if (user.Deleted === true) { // Deactivated send message to activate
@@ -99,7 +98,7 @@ getAllResourcesForGroup = async function (req, res) {
             }
             const group_id = req.params.group_id
             const groupUser = await GroupUser.findOne({ 'user_id': req.user_id })
-            if (!groupUser && (user.User_Category !== 'Doctor' || user.User_Category !== 'Admin')) {
+            if (!groupUser && (user.User_Category !== 'Doctor')) {
                 return res.status(403).send({ status: 'failure', message: 'Access Forbidden Cannot See Resources for outcomers' })
             } else {
                 const getAllResourcesForGroup = await Resource.find({ 'group_id': group_id })
@@ -125,7 +124,7 @@ getResourceByID = async function (req, res) {
             const group_id = req.params.group_id
             const resource_id = req.params.resource_id
             const groupUser = await GroupUser.findOne({ 'user_id': req.user_id })
-            if (!groupUser && (user.User_Category !== 'Doctor' || user.User_Category !== 'Admin')) {
+            if (!groupUser && (user.User_Category !== 'Doctor')) {
                 return res.status(403).send({ status: 'failure', message: 'Access Forbidden Cannot See Resources for outcomers' })
             } else {
                 const getAllResourcesForGroup = await Resource.findById({ '_id': resource_id })
