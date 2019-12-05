@@ -85,7 +85,7 @@ export default {
 };
 </script>
 
-<style coped>
+<style scoped>
 .forgot {
   height: 100vh;
 }

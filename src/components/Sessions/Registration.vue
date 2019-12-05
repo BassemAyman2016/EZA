@@ -155,7 +155,7 @@ export default {
 };
 </script>
 
-<style coped>
+<style scoped>
 .registeration {
   height: 100vh;
 }

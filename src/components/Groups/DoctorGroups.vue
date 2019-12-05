@@ -2,7 +2,7 @@
   <div>
     <div class="row justify-center q-gutter-md">
       <div class="col-3 q-gutter-md" v-for="(group, index) in MyGroups" :key="index">
-        <q-card class="my-card">
+        <q-card>
           <q-card-section>
             <div class="text-h6">{{ group.Name }}</div>
             <!-- <div class="text-subtitle2">by John Doe</div> -->
@@ -373,27 +373,28 @@ export default {
         group_id: user.group_id._id,
         requesting_id: user.user_id._id
       };
-      // api().post(`/groups/acceptJoinRequest/${user_id}`,apiObject)
-      // .then(res=>{
-      //   if(res.data.status=='success'){
-      //     this.$q.notify({
-      //         color: "teal",
-      //         message: "Join Request Accepted Successfully",
-      //         position: "top-right",
-      //         timeout: 1000
-      //       });
-      //       this.viewRequests(user.group_id);
-      //   }
-      // })
-      // .catch(err=>{
-      //   console.log(err)
-      //   this.$q.notify({
-      //       color: "red-10",
-      //       message: "Error Occured , Try Again",
-      //       position: "top-right",
-      //       timeout: 1000
-      //     });
-      // })
+      api()
+        .delete(`/groups/${user.group_id._id}/requests/${user.user_id._id}`)
+        .then(res => {
+          if (res.data.status == "success") {
+            this.$q.notify({
+              color: "teal",
+              message: "Join Request Rejected Successfully",
+              position: "top-right",
+              timeout: 1000
+            });
+            this.viewRequests(user.group_id);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.$q.notify({
+            color: "red-10",
+            message: "Error Occured , Try Again",
+            position: "top-right",
+            timeout: 1000
+          });
+        });
     },
     uploadResourceClicked(group) {
       this.resourceDialogFlag = true;

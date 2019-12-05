@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="fit column wrap justify-start items-start content-start q-gutter-md">
-      <div class="row q-gutter-md">
-        <q-card class="my-card bg-green-3" >
+      <div class="row q-gutter-md" style="width:90%">
+        <q-card class="bg-green-3" style="width:100%">
           <q-card-section>
             <div
               class="text-subtitle5"
@@ -12,29 +12,26 @@
               v-if="UserID!==currentPost.user_id._id"
             >{{currentPost.user_id.First_Name?currentPost.user_id.First_Name+" "+currentPost.user_id.Last_Name:currentPost.user_id.Email}}</div>
             <div class="text-subtitle1" v-else>You</div>
-            <div class="text-h4 ">{{ currentPost.Message }}</div>
+            <div class="text-h4">{{ currentPost.Message }}</div>
             <!-- <div class="text-subtitle2">by John Doe</div> -->
           </q-card-section>
-          
         </q-card>
       </div>
-      <div class="row q-gutter-md" v-for="(reply, index) in Replies" :key="index">
-        <q-card class="my-card" :class="{'bg-yellow-8':reply.user_id.User_Category=='Doctor'}">
+      <div class="row q-gutter-md" style="width:50%" v-for="(reply, index) in Replies" :key="index">
+        <q-card style="width:100%" :class="{'bg-yellow-8':reply.user_id.User_Category=='Doctor'}">
           <q-card-section>
             <!-- <div
               class="text-subtitle5"
-            >{{group.group_id.Name}} {{group.user_id.User_Category=='Doctor'?'Dr':''}}</div> -->
+            >{{group.group_id.Name}} {{group.user_id.User_Category=='Doctor'?'Dr':''}}</div>-->
             <div
               class="text-subtitle1"
               v-if="UserID!==reply.user_id._id"
             >{{reply.user_id.First_Name?reply.user_id.First_Name+" "+reply.user_id.Last_Name:reply.user_id.Email}} replied:</div>
             <div class="text-subtitle9" v-else>You replied:</div>
-            <div class="text-h6 ">{{ reply.Message }}</div>
+            <div class="text-h6">{{ reply.Message }}</div>
             <!-- <div class="text-subtitle2">by John Doe</div> -->
           </q-card-section>
           <q-card-actions class="row justify-center">
-            
-           
             <q-btn
               round
               color="red-10"
@@ -47,9 +44,15 @@
         </q-card>
       </div>
       <div class="col-3 q-gutter-md" style="margin-bottom:20px;">
-        <q-card class="my-card">
+        <q-card>
           <q-card-section>
-            <q-input rounded outlined v-model="replyText" label="Write Reply" @keyup.enter="submitReply" />
+            <q-input
+              rounded
+              outlined
+              v-model="replyText"
+              label="Write Reply"
+              @keyup.enter="submitReply"
+            />
           </q-card-section>
           <q-card-actions class="row justify-center">
             <q-btn color="primary" label="Submit" @click="submitReply" />
@@ -164,7 +167,7 @@ export default {
         });
     },
     postClicked(post) {
-        console.log(post)
+      console.log(post);
       this.$store.commit("setCurrentPost", post);
       this.$router.push("/replies");
       this.$store.dispatch("fetchPostReplies");
@@ -180,8 +183,8 @@ export default {
     UserID() {
       return this.$store.getters.getUserData.id;
     },
-    currentPost(){
-        return this.$store.getters.getCurrentPost
+    currentPost() {
+      return this.$store.getters.getCurrentPost;
     }
   }
 };

@@ -104,7 +104,7 @@ export default {
 };
 </script>
 
-<style coped>
+<style scoped>
 .login {
   height: 100vh;
 }

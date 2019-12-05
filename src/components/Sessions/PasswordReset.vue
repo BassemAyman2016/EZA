@@ -98,7 +98,7 @@ export default {
 };
 </script>
 
-<style coped>
+<style scoped>
 .reset-password {
   height: 100vh;
 }
