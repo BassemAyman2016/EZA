@@ -229,13 +229,14 @@ export default {
   created() {
     if (typeof this.$store.getters.getUserData.First_Name === "undefined") {
       this.Email = this.$store.getters.getUserData.email;
+      this.student_id = this.$store.getters.getUserData.email;
       this.fetchUserInfo();
     } else this.setUserData();
   }
 };
 </script>
 
-<style coped>
+<style scoped>
 .registeration {
   height: 100vh;
 }
