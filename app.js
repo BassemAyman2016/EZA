@@ -23,7 +23,6 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cors())
 
 
-
 app.use('/api/users', user);
 app.use('/api/sessions', accountService); // Used For Login , Activation , Deactivation , Forgetting Password if needed
 app.use('/api/groups', group)

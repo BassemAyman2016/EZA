@@ -31,3 +31,6 @@ To Fix errors throug terminal type: ./node_modules/.bin/eslint (Name of the file
 
 # Vs Code Cheat Sheet
   ctrl + k + 0 to collapse all
+
+# Heroku Deploy specific branch
+git push heroku yourbranch:master
