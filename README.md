@@ -1,8 +1,10 @@
 # EZA+
 EZA+ web app
-
-<<<<<<< HEAD
-Tables:
+# APIs And Backing Service USED:
+1- MongoDB
+2- NodeMailerJs
+3- CloudinaryApi
+# Tables:
 
 User { id,first_name,last_name,email,password,deleted}
 
@@ -26,4 +28,3 @@ notification{id,user_id,group_id,post_id}
 =======
 ## Run Through Terminal By:
 ### - npm run dev
->>>>>>> 80671579af355e8ceb396ed43f97b4801a967103
