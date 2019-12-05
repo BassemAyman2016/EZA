@@ -11,7 +11,7 @@
             <q-btn color="red-8" @click="SelectGroup(group)">Delete Group</q-btn>
             <q-btn color="primary" @click="inviteUser(group)">Invite User</q-btn>
             <q-btn color="secondary" @click="viewUsers(group)">View Users</q-btn>
-            <q-btn color="amber" @click="uploadResource(group)">Upload Resource</q-btn>
+            <q-btn color="amber" @click="uploadResourceClicked(group)">Upload Resource</q-btn>
             <q-btn color="purple-7" @click="viewRequests(group)">View Join Requests</q-btn>
           </q-card-actions>
         </q-card>
@@ -82,6 +82,7 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+
       <q-dialog v-model="secondDialog" persistent transition-show="scale" transition-hide="scale">
         <q-card>
           <q-card-section>
@@ -92,10 +93,11 @@
 
           <q-card-actions align="right" class="bg-white text-teal">
             <q-btn flat label="Yes" @click="kickUser" />
-            <q-btn flat label="No" v-close-popup />
+            <q-btn flat label="No" @click="secondDialog=false" />
           </q-card-actions>
         </q-card>
       </q-dialog>
+
       <q-dialog v-model="joinRequestsFlag" persistent>
         <q-card style="width: 700px; max-width: 80vw;">
           <q-card-section
@@ -130,6 +132,25 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+
+      <q-dialog v-model="resourceDialogFlag" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <input type="file" ref="file" @change="setFilePDF" />
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="OK" color="primary" @click="fileUpload" />
+            <q-btn
+              flat
+              label="Cancel"
+              color="primary"
+              v-close-popup
+              @click="resourceDialogFlag = false"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </div>
   </div>
 </template>
@@ -139,6 +160,7 @@
 /* eslint-disable */
 
 import api from "../../store/api";
+import axios from "axios";
 export default {
   name: "Groups",
   data() {
@@ -154,7 +176,13 @@ export default {
       secondDialog: false,
       selectedKickedUser: { Fitst_Name: "", Last_Name: "" },
       joinRequestsFlag: false,
+<<<<<<< HEAD
       joinRequests: []
+=======
+      joinRequests: [],
+      resourceDialogFlag: false,
+      filePDF: null
+>>>>>>> 11282932375c68deff1b973ee7a601a9c4e7a507
     };
   },
   created() {
@@ -267,7 +295,10 @@ export default {
         group_id: group_id,
         kick_id: kick_id
       };
+<<<<<<< HEAD
       console.log(apiObject);
+=======
+>>>>>>> 11282932375c68deff1b973ee7a601a9c4e7a507
       api()
         .delete(`/groups/doctorKickUser/${user_id}`, apiObject)
         .then(res => {
@@ -278,15 +309,18 @@ export default {
               position: "top-right",
               timeout: 1000
             });
-            this.selectedKickedUser = null;
-            this.groupUsers = [];
+
             this.secondDialog = false;
-            this.selectedGroup = null;
           }
         })
         .catch(err => {
           console.log(apiObject);
+<<<<<<< HEAD
           console.log(err);
+=======
+          console.log(err.response.data.message);
+          console.log(err.message);
+>>>>>>> 11282932375c68deff1b973ee7a601a9c4e7a507
           this.$q.notify({
             color: "red-10",
             message: "Error Occured , Try Again",
@@ -377,6 +411,82 @@ export default {
       //       timeout: 1000
       //     });
       // })
+    },
+    uploadResourceClicked(group) {
+      this.resourceDialogFlag = true;
+      this.selectedGroup = group;
+    },
+    async fileUpload() {
+      if (!this.filePDF) {
+        this.$q.notify({
+          color: "red-10",
+          message: "Please select a file to Upload",
+          position: "top-right",
+          timeout: 1000
+        });
+      } else {
+        this.resourceDialogFlag = false;
+        this.$q.notify({
+          color: "amber",
+          message: "Your file is uploading !!",
+          position: "top-right",
+          timeout: 1000
+        });
+        var form = new FormData();
+        form.append("file", this.filePDF);
+        form.append("upload_preset", "x3gcuzpi");
+        form.append("api_key", "455655914782479");
+        console.log(this.filePDF);
+        await axios
+          .post("https://api.cloudinary.com/v1_1/eza/auto/upload", form)
+          .then(res => {
+            console.log(res.data);
+            if (res.status == 200) {
+              var fileURL = res.data.secure_url;
+              var apiObject = {
+                data: fileURL,
+                name: this.filePDF.name
+              };
+              var group_id = this.selectedGroup._id;
+              api()
+                .post(`/resources/${group_id}`, apiObject)
+                .then(res => {
+                  if (res.data.status == "success") {
+                    this.$q.notify({
+                      color: "teal",
+                      message: "File done uploading !!",
+                      position: "top-right",
+                      timeout: 1000
+                    });
+                  }
+                })
+                .catch(err => {
+                  console.log(err.response.data);
+                  this.$q.notify({
+                    color: "red-10",
+                    message: "Error occured while uploading",
+                    position: "top-right",
+                    timeout: 1000
+                  });
+                });
+            }
+          })
+          .catch(err => {
+            console.log(err.response.data);
+            this.$q.notify({
+              color: "red-10",
+              message: "Error occured while uploading",
+              position: "top-right",
+              timeout: 1000
+            });
+          });
+
+        this.filePDF = null;
+        this.selectedGroup = null;
+      }
+    },
+    setFilePDF() {
+      this.filePDF = this.$refs.file.files[0];
     }
   },
   computed: {

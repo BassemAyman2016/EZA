@@ -1,10 +1,58 @@
 <template>
   <div>
+    <div class="row q-gutter-md">
+      <div class="col-3 q-gutter-md">
+        <q-card class="my-card">
+          <q-card-actions class="row justify-center">
+            <q-btn
+              color="green-8"
+              label="View Group Resources"
+              @click="showResources"
+              icon="far fa-copy"
+            />
+          </q-card-actions>
+        </q-card>
+      </div>
+      <q-dialog v-model="resourcesDialogFlag" persistent>
+        <q-card style="width: 500px; max-width: 80vw;">
+          <q-card-section
+            class="row justify-around"
+            v-for="(resource, index) in resourcesArray"
+            :key="index"
+          >
+            <div class="column text-h10">{{resource.name}}</div>
+            <div class="row q-gutter-sm">
+              <a :href="resource.data" download>
+                <q-btn round color="blue-10" icon="fas fa-file-download" title="download" />
+              </a>
+
+              <q-btn
+                round
+                color="red-10"
+                icon="fas fa-times"
+                title="delete file"
+                @click="deleteFile(resource)"
+                v-if="currentGroup.Created_By==$store.getters.getUserData.id"
+              />
+            </div>
+          </q-card-section>
+          <q-card-actions align="right" class="text-primary">
+            <q-btn flat label="OK" color="primary" @click="resourcesDialogFlag=false" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+    </div>
     <div class="row justify-center q-gutter-md">
       <div class="col-3 q-gutter-md">
         <q-card class="my-card">
           <q-card-section>
-            <q-input rounded outlined v-model="postText" label="Write Post" @keyup.enter="submitPost" />
+            <q-input
+              rounded
+              outlined
+              v-model="postText"
+              label="Write Post"
+              @keyup.enter="submitPost"
+            />
             <!-- <div class="text-subtitle2">by John Doe</div> -->
           </q-card-section>
           <q-card-actions class="row justify-center">
@@ -71,46 +119,25 @@ export default {
     return {
       confirm: false,
       selectedGroup: { Name: "First" },
-      postText: null
+      postText: null,
+      resourcesDialogFlag: false,
+      resourcesArray: [],
+      currentGroup: null
     };
   },
   created() {
     var group_id = this.$store.getters.getCurrentGroup._id;
+    this.currentGroup = this.$store.getters.getCurrentGroup;
     this.$store.dispatch("fetchGroupPosts", group_id);
+    // this.resourcesArray=[]
+    this.fetchResources(group_id);
   },
   methods: {
     SelectGroup(group) {
       this.selectedGroup = group;
       this.confirm = true;
     },
-    async DeleteGroup(selectedGroup) {
-      var user_id = this.$store.getters.getUserData.id;
-      await api()
-        .delete(`/groups/deleteGroup/${user_id}`, {
-          Name: selectedGroup.Name
-        })
-        .then(res => {
-          if (res.data.status == "success") {
-            this.$q.notify({
-              color: "teal",
-              message: "Group Deleted Successfully",
-              position: "top-right",
-              timeout: 1000
-            });
-            this.confirm = false;
-            this.selectedGroup = {};
-          }
-        })
-        .catch(err => {
-          console.log(err.response);
-          this.$q.notify({
-            color: "red-10",
-            message: "Error Occured , Try Again",
-            position: "top-right",
-            timeout: 1000
-          });
-        });
-    },
+
     async submitPost() {
       var user_id = this.$store.getters.getUserData.id;
       var group_id = this.$store.getters.getCurrentGroup._id;
@@ -172,6 +199,43 @@ export default {
       this.$store.commit("setCurrentPost", post);
       this.$router.push("/replies");
       this.$store.dispatch("fetchPostReplies");
+    },
+    showResources() {
+      this.resourcesDialogFlag = true;
+    },
+    fetchResources(group_id) {
+      api()
+        .get(`/resources/${group_id}`)
+        .then(res => {
+          if (res.data.status == "success") {
+            this.resourcesArray = res.data.resource;
+          }
+        })
+        .catch(err => console.log(err.response.data));
+    },
+    deleteFile(file) {
+      console.log(file);
+      api()
+        .delete(`/resources/${file._id}/groups/${file.group_id}`)
+        .then(res => {
+          if (res.data.status == "success") {
+            this.$q.notify({
+              color: "teal",
+              message: "Resource Deleted Successfully",
+              position: "top-right",
+              timeout: 1000
+            });
+            this.fetchResources(file.group_id);
+          }
+        })
+        .catch(err => {
+          this.$q.notify({
+            color: "red-10",
+            message: "Error Occured , Please Try Again",
+            position: "top-right",
+            timeout: 1000
+          });
+        });
     }
   },
   computed: {
@@ -183,6 +247,12 @@ export default {
     },
     UserID() {
       return this.$store.getters.getUserData.id;
+    }
+  },
+  watch: {
+    MyPosts(newvalue, oldValue) {
+      this.resourcesArray = [];
+      this.fetchResources(this.$store.getters.getCurrentGroup._id);
     }
   }
 };

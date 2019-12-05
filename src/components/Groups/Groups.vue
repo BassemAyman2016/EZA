@@ -84,27 +84,40 @@ export default {
         })
         .catch(err => {
           console.log(err);
-          if (err.message == "You  Already  Requested to Enter This Group") {
+          if (
+            err.response.data.message ==
+            "You  Already  Requested to Enter This Group"
+          ) {
             this.$q.notify({
-              color: "red-10",
+              color: "purple",
               message: "You  Already Requested to Enter This Group",
               position: "top-right",
               timeout: 1000
             });
           } else {
-            this.$q.notify({
-              color: "red-10",
-              message: "Error Occured , Try Again",
-              position: "top-right",
-              timeout: 1000
-            });
+            if (err.response.data.message == "You Are Already In This Group") {
+              this.$q.notify({
+                color: "amber",
+                message: "You are already in this Group",
+                position: "top-right",
+                timeout: 1000
+              });
+            } else
+              this.$q.notify({
+                color: "red-10",
+                message: "Error Occured , Try Again",
+                position: "top-right",
+                timeout: 1000
+              });
           }
         });
     }
   },
   computed: {
     Groups() {
-      return this.$store.getters.getAllGroups;
+      var groups = this.$store.getters.getAllGroups;
+      this.$forceUpdate();
+      return groups;
     },
     Role() {
       return sessionStorage.getItem("role");
