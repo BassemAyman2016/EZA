@@ -46,32 +46,32 @@ CreateGroup = async function (req, res) {
 };
 DeleteGroup = async function (req, res) {
     try {
-     
-            if (req.user_id !== req.params.user_id) {
-                return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
-            }
-            const user = await User.findOne({ '_id': req.params.user_id })
-            if (!user) {
-                return res.status(404).send({ status: 'failure', message: 'User Not Found' })
-            }
-            if (user.User_Category !== 'Doctor') {
-                return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
-            }
-            if (user.Deleted === true) { // Deactivated send message to activate
-                return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
-            }
 
-            const group = await Group.findOne({ '_id': req.params.group_id });
-            const userDeleted = await GroupUser.remove({'group_id':req.params.group_id})
-            if (group.Created_By === req.params.user_id) {
-                await Group.deleteOne({ '_id': req.params.group_id });
-                res.status(200).send({ status: 'success', msg: 'Group Deleted successfully' });
-            } else {
-                return res.status(404).send({ status: 'failure', message: 'This group is not created by you' })
-            }
+        if (req.user_id !== req.params.user_id) {
+            return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
+        }
+        const user = await User.findOne({ '_id': req.params.user_id })
+        if (!user) {
+            return res.status(404).send({ status: 'failure', message: 'User Not Found' })
+        }
+        if (user.User_Category !== 'Doctor') {
+            return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
+        }
+        if (user.Deleted === true) { // Deactivated send message to activate
+            return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
+        }
+
+        const group = await Group.findOne({ '_id': req.params.group_id });
+        const userDeleted = await GroupUser.remove({ 'group_id': req.params.group_id })
+        if (group.Created_By === req.params.user_id) {
+            await Group.deleteOne({ '_id': req.params.group_id });
+            res.status(200).send({ status: 'success', msg: 'Group Deleted successfully' });
+        } else {
+            return res.status(404).send({ status: 'failure', message: 'This group is not created by you' })
+        }
 
 
-        
+
     } catch (e) {
         console.log(e)
         res.status(422).send({ status: 'failure', message: 'Deletion of Group Failed' });
@@ -160,6 +160,9 @@ AcceptJoinRequest = async function (req, res) {
             const { group_id, requesting_id } = req.body;
 
             const AcceptRequest = await GroupUser.findOne({ group_id: group_id, user_id: requesting_id });
+            if (!AcceptRequest) {
+                return res.status(404).send({ status: 'failure', message: 'Request Not Found' })
+            }
             await GroupUser.findByIdAndUpdate(AcceptRequest._id, { Pending: false });
             const updated = await GroupUser.findOne({ '_id': AcceptRequest._id });
             return res.status(200).send({ status: 'success', message: 'success', data: updated });
@@ -355,12 +358,12 @@ getRequests = async function (req, res) {
             if (!user) {
                 return res.status(404).send({ status: 'failure', message: 'User Not Found' })
             }
-            const getUserGroup = await Group.findOne({'Created_By':req.user_id , '_id': req.params.group_id})
+            const getUserGroup = await Group.findOne({ 'Created_By': req.user_id, '_id': req.params.group_id })
             if (!getUserGroup) {
                 return res.status(401).send({ status: 'failure', message: 'Unauthorized access you do not belong to this group' })
             }
             const allUsersinGroup = await GroupUser.find({ group_id: req.params.group_id, Pending: true }).populate({ path: 'user_id' }).populate({ path: 'group_id' })
-            res.status(200).send({ status: 'success', requests:allUsersinGroup});
+            res.status(200).send({ status: 'success', requests: allUsersinGroup });
 
         }
     } catch (e) {
@@ -368,49 +371,84 @@ getRequests = async function (req, res) {
         res.status(422).send({ status: 'failure', message: 'Deletion of Group Failed' });
     }
 };
-    DoctorInviteUser = async function (req, res) {
-        try {
-            const validation = req.params && req.body.email !== null;
-            if (!validation) {
-                return res.status(400).send({ status: 'failure', message: 'Params Missing' });
-    
-            } else {
-                if (req.role !== 'Doctor') {
-                    return res.status(403).send({ status: 'failure', message: 'Access Forbidden' })
-                }
-                const user = await User.findOne({ '_id': req.user_id })
-                if (!user) {
+DoctorInviteUser = async function (req, res) {
+    try {
+        const validation = req.params && req.body.email !== null;
+        if (!validation) {
+            return res.status(400).send({ status: 'failure', message: 'Params Missing' });
+
+        } else {
+            if (req.role !== 'Doctor') {
+                return res.status(403).send({ status: 'failure', message: 'Access Forbidden' })
+            }
+            const user = await User.findOne({ '_id': req.user_id })
+            if (!user) {
+                return res.status(404).send({ status: 'failure', message: 'User Not Found' })
+            }
+            console.log(req.body.email);
+            const group = await Group.findOne({ '_id': req.params.group_id });
+            if (group.Created_By === req.user_id) {
+                const userToInvite = await User.findOne({ "Email": req.body.email })
+
+                if (!userToInvite) {
                     return res.status(404).send({ status: 'failure', message: 'User Not Found' })
                 }
-               console.log(req.body.email);
-                const group = await Group.findOne({ '_id': req.params.group_id });
-                if (group.Created_By === req.user_id) {
-                    const userToInvite =await User.findOne({"Email":req.body.email})
 
-                    if(!userToInvite)
-                    {   
-                        return res.status(404).send({ status: 'failure', message: 'User Not Found' })}
-
-                    const found = await GroupUser.findOne({"group_id":req.params.group_id , "user_id":userToInvite._id})
-                    if(!found)
-                    { 
-                        await GroupUser.create({"group_id":req.params.group_id , "user_id":userToInvite._id,"Pending":false})
-                    }   
-                    else
-                    return res.status(404).send({ status: 'failure', message: 'User Already requested to join' })
-            
-                    res.status(200).send({ status: 'success', msg: 'User joined successfully'});
-                } else {
-                    return res.status(404).send({ status: 'failure', message: 'This group is not created by you' })
+                const found = await GroupUser.findOne({ "group_id": req.params.group_id, "user_id": userToInvite._id })
+                if (!found) {
+                    await GroupUser.create({ "group_id": req.params.group_id, "user_id": userToInvite._id, "Pending": false })
                 }
-               
-    
+                else
+                    return res.status(404).send({ status: 'failure', message: 'User Already requested to join' })
+
+                res.status(200).send({ status: 'success', msg: 'User joined successfully' });
+            } else {
+                return res.status(404).send({ status: 'failure', message: 'This group is not created by you' })
             }
-        } catch (e) {
-            console.log(e)
-            res.status(422).send({ status: 'failure', message: 'Invitation for Group Failed' });
+
+
         }
-    };
+    } catch (e) {
+        console.log(e)
+        res.status(422).send({ status: 'failure', message: 'Invitation for Group Failed' });
+    }
+};
+cancelRequest = async function (req, res) {
+    try {
+        const validation = req.params.user_id != null && req.params.group_id != null
+        if (!validation) {
+            return res.status(400).send({ status: 'failure', message: 'Params Missing' });
+
+        } else {
+            const group_id = req.params.group_id
+            const user_id = req.params.user_id
+            const user = await User.findOne({ '_id': req.user_id })
+            if (!user) {
+                return res.status(404).send({ status: 'failure', message: 'User Not Found' })
+            }
+            if (user.User_Category !== 'Doctor') {
+                return res.status(403).send({ status: 'failure', message: 'Access Forbidden' })
+            }
+
+            if (user.Deleted === true) { // Deactivated send message to activate
+                return res.status(404).send({ status: 'failure', message: 'Account is deactivated to activate your account please request access' })
+            }
+
+
+            const findRequest = await GroupUser.findOne({ group_id: group_id, user_id: user_id });
+            if (!findRequest) {
+                return res.status(404).send({ status: 'failure', message: 'Request Not Found' })
+
+            }
+            const deleteRequest = await GroupUser.deleteOne({ "_id": findRequest._id });
+            return res.status(200).send({ status: 'success', message: 'request cancelled' });
+        }
+    } catch (e) {
+        console.log(e)
+        res.status(422).send({ status: 'failure', message: 'Deletion of Request Failed' });
+    }
+};
+
 module.exports = {
     CreateGroup,
     DeleteGroup,
@@ -422,5 +460,6 @@ module.exports = {
     GetAllUsersInGroup,
     DoctorKickUser,
     getRequests,
-    DoctorInviteUser
+    DoctorInviteUser,
+    cancelRequest
 }

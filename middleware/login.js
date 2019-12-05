@@ -17,12 +17,14 @@ function verifyToken(req, res, next) {
         } else {
             req.token = bearerToken;
             // Next middleware
-            jwt.verify(req.token, tokenKey, async(err, authData) => {
+            jwt.verify(req.token, tokenKey, async (err, authData) => {
                 if (err) {
                     return res.status(400).send({ status: 'failure', message: 'Authentication Failed' })
                 } else {
                     req.user_id = authData.id
                     req.role = authData.User_Category
+                    req.student_id = authData.student_id
+                    req.email = authData.email
                     next()
                 }
             })
