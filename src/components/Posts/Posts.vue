@@ -4,7 +4,7 @@
       <div class="col-3 q-gutter-md">
         <q-card class="my-card">
           <q-card-section>
-            <q-input rounded outlined v-model="postText" label="Write Post" />
+            <q-input rounded outlined v-model="postText" label="Write Post" @keyup.enter="submitPost" />
             <!-- <div class="text-subtitle2">by John Doe</div> -->
           </q-card-section>
           <q-card-actions class="row justify-center">

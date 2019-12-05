@@ -7,11 +7,12 @@
             <div class="text-h6">{{ group.Name }}</div>
             <!-- <div class="text-subtitle2">by John Doe</div> -->
           </q-card-section>
-          <q-card-actions>
-            <q-btn flat @click="SelectGroup(group)">Delete Group</q-btn>
-            <q-btn flat @click="inviteUser(group)">Invite User</q-btn>
-            <q-btn flat @click="viewUsers(group)">View Users</q-btn>
-            <q-btn flat @click="uploadResource(group)">Upload Resource</q-btn>
+          <q-card-actions class="q-gutter-sm row justify-center">
+            <q-btn color="red-8"  @click="SelectGroup(group)">Delete Group</q-btn>
+            <q-btn color="primary" @click="inviteUser(group)">Invite User</q-btn>
+            <q-btn color="secondary" @click="viewUsers(group)">View Users</q-btn>
+            <q-btn color="amber" @click="uploadResource(group)">Upload Resource</q-btn>
+            <q-btn color="purple-7" @click="viewRequests(group)">View Join Requests</q-btn>
           </q-card-actions>
         </q-card>
       </div>
@@ -95,11 +96,44 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="joinRequestsFlag" persistent>
+        <q-card style="width: 700px; max-width: 80vw;">
+          <q-card-section
+            class="row justify-around"
+            v-for="(user, index) in joinRequests"
+            :key="index"
+          >
+            <div
+              class="column text-h5"
+            >{{user.user_id.First_Name?user.user_id.First_Name+" "+user.user_id.Last_Name:user.user_id.Email}}</div>
+            <div class="row q-gutter-sm"><q-btn
+              round
+              color="secondary"
+              icon="fas fa-check"
+              title="accept"
+              v-close-popup
+              @click="acceptJoinRequest(user)"
+            />
+            <q-btn
+              round
+              color="red-10"
+              icon="fas fa-times"
+              title="reject"
+              v-close-popup
+              @click="rejectJoinRequest(user)"
+            /></div>
+            
+            
+          </q-card-section>
+          <q-card-actions align="right" class="text-primary">
+            <q-btn flat label="OK" color="primary" @click="joinRequestsFlag=false" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </div>
   </div>
 </template>
-  </div>
-</template>
+  
 
 <script>
 import api from "../../store/api";
@@ -116,7 +150,9 @@ export default {
       groupUsers: [],
       inception: false,
       secondDialog: false,
-      selectedKickedUser: { Fitst_Name: "", Last_Name: "" }
+      selectedKickedUser: { Fitst_Name: "", Last_Name: "" },
+      joinRequestsFlag:false,
+      joinRequests:[]
     };
   },
   created() {
@@ -224,13 +260,12 @@ export default {
     kickUser() {
       var user_id = this.$store.getters.getUserData.id;
       var group_id = this.selectedGroup._id;
-      console.log(group_id);
       var kick_id = this.selectedKickedUser._id;
-      console.log(kick_id);
       var apiObject = {
         group_id: group_id,
         kick_id: kick_id
       };
+      console.log(apiObject)
       api()
         .delete(`/groups/doctorKickUser/${user_id}`, apiObject)
         .then(res => {
@@ -247,6 +282,33 @@ export default {
             this.selectedGroup = null;
           }
         })
+        .catch(err => {
+          console.log(apiObject)
+          console.log(err);
+          this.$q.notify({
+            color: "red-10",
+            message: "Error Occured , Try Again",
+            position: "top-right",
+            timeout: 1000
+          });
+        });
+    },
+    viewRequests(group){
+      this.joinRequests = [];
+      this.$q.loading.show();
+      // hiding in 2s
+      this.timer = setTimeout(() => {
+        this.$q.loading.hide();
+        this.timer = void 0;
+      }, 1000);
+      var group_id = group._id;
+      api()
+        .get(`/groups/requests/${group_id}`)
+        .then(res => {
+          if (res.data.status == "success") {
+            this.joinRequests = res.data.requests;
+          }
+        })
         .catch(() => {
           this.$q.notify({
             color: "red-10",
@@ -255,6 +317,63 @@ export default {
             timeout: 1000
           });
         });
+      this.joinRequestsFlag = true;
+    },
+    acceptJoinRequest(user){
+      var user_id = this.$store.getters.getUserData.id 
+      var apiObject ={
+        group_id:user.group_id._id,
+        requesting_id:user.user_id._id
+      }
+      api().post(`/groups/acceptJoinRequest/${user_id}`,apiObject)
+      .then(res=>{
+        if(res.data.status=='success'){
+          this.$q.notify({
+              color: "teal",
+              message: "Join Request Accepted Successfully",
+              position: "top-right",
+              timeout: 1000
+            });
+            this.viewRequests(user.group_id);
+        }
+      })
+      .catch(err=>{
+        console.log(err)
+        this.$q.notify({
+            color: "red-10",
+            message: "Error Occured , Try Again",
+            position: "top-right",
+            timeout: 1000
+          });
+      })
+    },
+    rejectJoinRequest(user){
+      var user_id = this.$store.getters.getUserData.id 
+      var apiObject ={
+        group_id:user.group_id._id,
+        requesting_id:user.user_id._id
+      }
+      // api().post(`/groups/acceptJoinRequest/${user_id}`,apiObject)
+      // .then(res=>{
+      //   if(res.data.status=='success'){
+      //     this.$q.notify({
+      //         color: "teal",
+      //         message: "Join Request Accepted Successfully",
+      //         position: "top-right",
+      //         timeout: 1000
+      //       });
+      //       this.viewRequests(user.group_id);
+      //   }
+      // })
+      // .catch(err=>{
+      //   console.log(err)
+      //   this.$q.notify({
+      //       color: "red-10",
+      //       message: "Error Occured , Try Again",
+      //       position: "top-right",
+      //       timeout: 1000
+      //     });
+      // })
     }
   },
   computed: {
