@@ -11,6 +11,8 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^0.19.0",
     "core-js": "^3.4.3",
+    "mdb-cli": "^1.1.21",
+    "mdbvue": "^6.1.0",
     "quasar": "^1.0.0",
     "vue": "^2.6.10",
     "vue-router": "^3.1.3",

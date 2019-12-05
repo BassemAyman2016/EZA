@@ -157,6 +157,8 @@
   
 
 <script>
+/* eslint-disable */
+
 import api from "../../store/api";
 import axios from "axios";
 export default {
@@ -285,12 +287,8 @@ export default {
       var user_id = this.$store.getters.getUserData.id;
       var group_id = this.selectedGroup._id;
       var kick_id = this.selectedKickedUser._id;
-      var apiObject = {
-        group_id: group_id,
-        kick_id: kick_id
-      };
       api()
-        .delete(`/groups/doctorKickUser/${user_id}`, apiObject)
+        .delete(`/groups/${group_id}/doctorKickUser/${user_id}/${kick_id}`)
         .then(res => {
           if (res.data.status == "success") {
             this.$q.notify({
@@ -304,7 +302,6 @@ export default {
           }
         })
         .catch(err => {
-          console.log(apiObject);
           console.log(err.response.data.message);
           console.log(err.message);
           this.$q.notify({
