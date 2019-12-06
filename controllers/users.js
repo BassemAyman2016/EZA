@@ -79,9 +79,9 @@ UserRegistration = async function (req, res) {
                     return res.status(400).send({ status: 'failure', message: 'Email Already Exists' })
                 }
                 try {
-                    const html = fs.readFileSync(path.resolve(__dirname, 'ResetPasswordTemplate.html'), 'utf8').toString()
-                        .replace(/\$\{token\}/g, `http://ezaplus.com`)
-                    const sendMail = await EmailAdapter.send('eza+@eza.com', email, '', html)
+                    const html = fs.readFileSync(path.resolve(__dirname, 'htmlPage.html'), 'utf8').toString()
+                        .replace(/\$\{token\}/g, `https://eza-plus.herokuapp.com`)
+                    const sendMail = await EmailAdapter.send('eza+@eza.com', email, 'Welcome To Our Family', 'Congratulations, You are now an official EZA+ Member', html)
                     const encrypted = bcrypt.genSaltSync(10);
                     const hashedPassword = bcrypt.hashSync(req.body.Password, encrypted);
                     req.body.Password = hashedPassword
