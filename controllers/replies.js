@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
-    // const passport = require('passport')
+// const passport = require('passport')
 const Post = require('../models/Post');
 const Group = require('../models/Group');
 const GroupUser = require('../models/GroupUser');
@@ -15,7 +15,7 @@ require('dotenv').config();
 
 
 
-CreateReply = async function(req, res) {
+CreateReply = async function (req, res) {
     try {
         const validation = req.body && req.body.Message != null
         if (!validation) {
@@ -51,7 +51,7 @@ CreateReply = async function(req, res) {
                     }
                     try {
                         const html = fs.readFileSync(path.resolve(__dirname, 'digestTemplate.html'), 'utf8').toString()
-                            .replace(/\$\{token\}/g, `http://localhost:8080/posts/${post._id}`)
+                            .replace(/\$\{token\}/g, `https://eza-plus.herokuapp.com/posts/${post._id}`)
                             .replace(/\$\{token2\}/g, `User with this Information: Email: ${user.Email}, Name:${user.First_Name + ' ' + user.Last_Name} Replied On Your Post`)
                         const sendMail = await EmailAdapter.send('eza+@eza.com', getUserEmail.Email, 'Activty', 'Digest', html)
                         const replyObject = {
@@ -80,7 +80,7 @@ CreateReply = async function(req, res) {
     }
 }
 
-DeleteReply = async function(req, res) {
+DeleteReply = async function (req, res) {
     try {
         if (req.user_id !== req.params.user_id) {
             return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
@@ -110,7 +110,7 @@ DeleteReply = async function(req, res) {
     }
 }
 
-GetAllRepliesToPost = async function(req, res) {
+GetAllRepliesToPost = async function (req, res) {
     try {
         if (req.user_id !== req.params.user_id) {
             return res.status(404).send({ status: 'failure', message: 'Access Forbidden' })
