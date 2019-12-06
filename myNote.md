@@ -34,5 +34,6 @@ To Fix errors throug terminal type: ./node_modules/.bin/eslint (Name of the file
 
 # Heroku Deploy specific branch
 heroku git:remote -a ezaplus
+heroku config:add 
 git add /commit
 git push heroku yourbranch:master
