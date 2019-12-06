@@ -15,3 +15,13 @@ services:
       - ./data:/data/db
     ports:
       - "27017:27017"
+
+  frontend:
+    build:
+          context: ./client/
+          dockerfile: ./Dockerfile
+    ports:
+        - "8080:8080"
+    command: "npm run serve"
+    links:
+        - "app"
