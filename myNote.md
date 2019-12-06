@@ -37,3 +37,4 @@ heroku git:remote -a ezaplus
 heroku config:add 
 git add /commit
 git push heroku yourbranch:master
+heroku container:push web
